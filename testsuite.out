@@ -1,0 +1,95 @@
+35: [------------] TESTSUITE 2.3.0
+35: [------------] Configuration file: testsuite_config.cfg
+35: [------------] XML file: testlist_gpu_noasyncio.xml
+35: [------------] TEST cosmo7/test_1_gpu: Only dynamics, lcpp_dycore=.TRUE.
+35:   [  [0;32mMATCH[0m   ] run_success_check.py
+35:   [  [0;32mMATCH[0m   ] existence_grib_out.sh
+35:   [    [0;32mOK[0m    ] tolerance_check.py
+35:                  Errors above threshold: 7 , max diff  1.458568e+00 at line 3489, step 0
+35:                    Errors above threshold :
+35:                    var        ee    lev       min      imin   jmin         max      imax   jmax           mean          step       error
+35:                    SWISS12          139   1       -999.900024    8   18              12.775971    1   54             -1.5291344
+35:                    SWISS12          139   1       -999.900024    8   18              12.775004    1   54              0.7012125
+35:   [   [0;31mFAIL[0m   ] output_tolerance_check.py
+35: [    [1;31mFAIL[0m    ] RESULT cosmo7/test_1_gpu: Only dynamics, lcpp_dycore=.TRUE.
+35: [------------] TEST cosmo7/test_2_gpu: Dynamics and physics, lcpp_dycore=.TRUE.
+35:   [  [0;32mMATCH[0m   ] run_success_check.py
+35:   [  [0;32mMATCH[0m   ] existence_grib_out.sh
+35:                  tolerance_check.py: 
+35:                     nt     CHKDAT         QG          U          V          W          T         PP         QV         QC         QI         QR         QS        TKE      other   status  reason
+35:                      0        nan        nan   2.60e-16   2.13e-16   0.00e+00   4.15e-16   4.30e-16   4.39e-15   5.70e-13   5.95e-15   3.19e-15   1.58e-15   6.97e-13        nan       OK  none
+35:                      1        nan        nan   2.44e-14   1.78e-13   1.00e+00   1.35e-15   3.41e-14   4.00e-14   6.74e-13   2.61e-13   1.60e-13   5.53e-14   4.10e-12        nan     FAIL  minimum of W on level 1 ( 1.00e+00 > 6e-10)
+35:                      2        nan        nan   2.24e+00   2.77e+00   1.58e+00   4.04e-02   2.34e+01   3.77e-02   4.01e-01   4.78e-02   6.31e-01   3.20e-02   4.37e-01        nan     FAIL  maximum of PP on level 18 ( 2.34e+01 > 2e-11)
+35:                      3        nan        nan   1.68e+00   1.37e+00   1.37e+01   4.07e-02   3.90e+01   4.52e-02   4.83e-01   8.58e-02   9.84e-01   1.20e-01   4.35e-01        nan     FAIL  maximum of PP on level 18 ( 2.34e+01 > 2e-11)
+35:                     10        nan        nan   1.62e+00   1.99e+00   1.17e+00   9.74e-02   6.22e+00   2.36e+00   1.00e+00   9.99e-01   1.00e+00   9.92e-01   3.73e+00        nan     FAIL  maximum of PP on level 18 ( 2.34e+01 > 2e-11)
+35:                     20        nan        nan   1.30e+00   3.57e+00   1.14e+00   1.18e-01   7.90e+00   5.30e+00   1.00e+00   1.00e+00   1.00e+00   1.00e+00   9.83e-01        nan     FAIL  maximum of PP on level 18 ( 2.34e+01 > 2e-11)
+35:   [   [0;31mFAIL[0m   ] tolerance_check.py
+35:                  Errors above threshold: 8 , max diff  1.458085e+00 at line 3701, step 0
+35:                    Errors above threshold :
+35:                    var        ee    lev       min      imin   jmin         max      imax   jmax           mean          step       error
+35:                    SWISS12          139   1       -999.900024    8   18              12.775209    1   54             -1.5296435
+35:                    SWISS12          139   1       -999.900024    8   18              12.774243    1   54              0.7007064
+35:   [   [0;31mFAIL[0m   ] output_tolerance_check.py
+35: [    [1;31mFAIL[0m    ] RESULT cosmo7/test_2_gpu: Dynamics and physics, lcpp_dycore=.TRUE.
+35: [------------] TEST cosmo7/test_bechtold_gpu: Dynamics and physics, lcpp_dycore=.TRUE.
+35:   [  [0;32mMATCH[0m   ] run_success_check.py
+35:   [  [0;32mMATCH[0m   ] existence_grib_out.sh
+35:   [    [0;32mOK[0m    ] tolerance_check.py
+35:                  Errors above threshold: 8 , max diff  1.458085e+00 at line 3701, step 0
+35:                    Errors above threshold :
+35:                    var        ee    lev       min      imin   jmin         max      imax   jmax           mean          step       error
+35:                    SWISS12          139   1       -999.900024    8   18              12.775209    1   54             -1.5296435
+35:                    SWISS12          139   1       -999.900024    8   18              12.774243    1   54              0.7007064
+35:   [   [0;31mFAIL[0m   ] output_tolerance_check.py
+35: [    [1;31mFAIL[0m    ] RESULT cosmo7/test_bechtold_gpu: Dynamics and physics, lcpp_dycore=.TRUE.
+35: [------------] TEST cosmo-1e/test_1_gpu: COSMO-1E, mch operational, lcpp_dycore=.TRUE.
+35:   [  [0;32mMATCH[0m   ] run_success_check.py
+35:   [  [0;32mMATCH[0m   ] existence_grib_out.sh
+35:   [    [0;32mOK[0m    ] tolerance_check.py
+35:                  Errors above threshold: 11 , max diff  1.000000e+00 at line 2922, step 0
+35:                    Errors above threshold :
+35:                    var        ee    lev       min      imin   jmin         max      imax   jmax           mean          step       error
+35:                    DURSUN            20   1          0.000000    1    1               0.000000    1    1              0.0000000
+35:                    DURSUN            20   1          0.000000    4    1              10.000000    2    1              7.5990796
+35:   [   [0;31mFAIL[0m   ] output_tolerance_check.py
+35: [    [1;31mFAIL[0m    ] RESULT cosmo-1e/test_1_gpu: COSMO-1E, mch operational, lcpp_dycore=.TRUE.
+35: [------------] TEST cosmo-2e/test_1_gpu: COSMO-2E as operational ctrl lcpp_dycore=.TRUE. 
+35:   [  [0;32mMATCH[0m   ] run_success_check.py
+35:   [  [0;32mMATCH[0m   ] existence_grib_out.sh
+35:   [    [0;32mOK[0m    ] tolerance_check.py
+35:                  Errors above threshold: 6 , max diff  1.000000e+00 at line 2415, step 0
+35:                    Errors above threshold :
+35:                    var        ee    lev       min      imin   jmin         max      imax   jmax           mean          step       error
+35:                    DURSUN            20   1          0.000000    1    1               0.000000    1    1              0.0000000
+35:                    DURSUN            20   1          0.000000    1    1              20.000000   76    1              0.5583509
+35:   [   [0;31mFAIL[0m   ] output_tolerance_check.py
+35: [    [1;31mFAIL[0m    ] RESULT cosmo-2e/test_1_gpu: COSMO-2E as operational ctrl lcpp_dycore=.TRUE. 
+35: [------------] TEST hailcast/test_1_gpu: Test HAILCAST model
+35:   [  [0;32mMATCH[0m   ] run_success_check.py
+35:   [  [0;32mMATCH[0m   ] existence_grib_out.sh
+35:   [    [0;32mOK[0m    ] tolerance_check.py
+35:                  Errors above threshold: 36 , max diff  1.000000e+00 at line 3647, step 0
+35:                    Errors above threshold :
+35:                    var        ee    lev       min      imin   jmin         max      imax   jmax           mean          step       error
+35:                    DURSUN            20   1          0.000000    1    1               0.000000    1    1              0.0000000
+35:                    DURSUN            20   1          0.000000    1    1              10.000000   19    1              2.9541667
+35:   [   [0;31mFAIL[0m   ] output_tolerance_check.py
+35: [    [1;31mFAIL[0m    ] RESULT hailcast/test_1_gpu: Test HAILCAST model
+35: [------------] TEST kenda/test_1_gpu: KENDA full check, lcpp_dycore=.TRUE.
+35:   [  [0;32mMATCH[0m   ] run_success_check.py
+35:   [  [0;32mMATCH[0m   ] existence_grib_out.sh
+35:   [    [0;32mOK[0m    ] tolerance_check.py
+35:                  Errors above threshold: 5 , max diff  1.000000e+00 at line 3661, step 0
+35:                    Errors above threshold :
+35:                    var        ee    lev       min      imin   jmin         max      imax   jmax           mean          step       error
+35:                    DURSUN            20   1          0.000000    1    1               0.000000    1    1              0.0000000
+35:                    DURSUN            20   1          0.000000   39   20              10.000000    1    1              9.9761477
+35:   [   [0;31mFAIL[0m   ] output_tolerance_check.py
+35: [    [1;31mFAIL[0m    ] RESULT kenda/test_1_gpu: KENDA full check, lcpp_dycore=.TRUE.
+35: [------------] TEST climate/test_1_gpu: Climate test, lbdclim=.TRUE.
+35:   [  [0;32mMATCH[0m   ] run_success_check.py
+35:   [  [0;32mMATCH[0m   ] existence_ncdf_out.sh
+35:   [    [0;32mOK[0m    ] tolerance_check.py
+35:   [    [0;32mOK[0m    ] output_tolerance_check.py
+35: [     [1;32mOK[0m     ] RESULT climate/test_1_gpu: Climate test, lbdclim=.TRUE.
+35: [------------] FINISHED
