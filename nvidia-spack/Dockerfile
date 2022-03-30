@@ -1,7 +1,8 @@
 FROM nvcr.io/nvidia/nvhpc:21.3-devel-cuda_multi-ubuntu20.04
 ARG ssh_prv_key
 ARG ssh_pub_key
-ENV SPACK_ROOT=/opt/spack-c2sm/spack
+ENV ROOT=/opt
+ENV SPACK_ROOT=$ROOT/spack
 
 RUN apt-get -yqq update \
  && apt-get -yqq install --no-install-recommends \
@@ -38,8 +39,8 @@ RUN echo "$ssh_prv_key" > /root/.ssh/id_rsa && \
     chmod 600 /root/.ssh/id_rsa.pub
 
 RUN git clone https://github.com/C2SM/spack-c2sm.git  /opt/spack-c2sm && \
-    cd /opt/spack-c2sm && git checkout use_module_daint && ./config.py -m daint -u OFF -i . \
-    --no_yaml_copy ON -p /spack-install -s /spack-stages -c /spack-cache
+    cd /opt/spack-c2sm && git checkout docker && ./config.py -m container -u OFF -i $ROOT \
+    -p $ROOT -s $ROOT -c $ROOT
 
 RUN mkdir -p $SPACK_ROOT/opt/spack
 
