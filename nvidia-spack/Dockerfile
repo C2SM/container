@@ -72,7 +72,8 @@ SHELL ["docker-shell"]
 
 # TODO: add a command to Spack that (re)creates the package cache
 RUN spack spec hdf5+mpi
-RUn spack compiler find
+
+RUN spack compiler find
 
 ENTRYPOINT ["/bin/bash", "/opt/spack/share/spack/docker/entrypoint.bash"]
 CMD ["interactive-shell"]
