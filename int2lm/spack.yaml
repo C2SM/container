@@ -1,6 +1,7 @@
 spack:
   specs:
   - int2lm@c2sm-master%nvhpc ^cmake%gcc
+  view: false
   packages:
     all:
       compiler: [nvhpc,gcc]
