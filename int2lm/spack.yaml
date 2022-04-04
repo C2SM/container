@@ -1,6 +1,6 @@
 spack:
   specs:
-  - int2lm%nvhpc ^cmake%gcc
+  - int2lm@c2sm-master%nvhpc ^cmake%gcc
   packages:
     all:
       compiler: [nvhpc,gcc]
