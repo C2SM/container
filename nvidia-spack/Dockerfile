@@ -1,6 +1,5 @@
+# syntax=docker/dockerfile:1.2
 FROM nvcr.io/nvidia/nvhpc:21.3-devel-cuda_multi-ubuntu20.04
-ARG ssh_prv_key
-ARG ssh_pub_key
 ENV ROOT=/opt
 ENV SPACK_ROOT=$ROOT/spack
 
@@ -32,13 +31,7 @@ RUN mkdir -p /root/.ssh && \
     chmod 0700 /root/.ssh && \
     ssh-keyscan github.com > /root/.ssh/known_hosts
 
-# Add the keys and set permissions
-RUN echo "$ssh_prv_key" > /root/.ssh/id_rsa && \
-    echo "$ssh_pub_key" > /root/.ssh/id_rsa.pub && \
-    chmod 600 /root/.ssh/id_rsa && \
-    chmod 600 /root/.ssh/id_rsa.pub
-
-RUN git clone https://github.com/C2SM/spack-c2sm.git  /opt/spack-c2sm && \
+RUN --mount=type=ssh git clone https://github.com/C2SM/spack-c2sm.git  /opt/spack-c2sm && \
     cd /opt/spack-c2sm && git checkout docker && ./config.py -m container -u OFF -i $ROOT \
     -p $ROOT -s $ROOT -c $ROOT
 
