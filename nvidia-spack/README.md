@@ -1,4 +1,7 @@
+## Enable BuildKit builds
+In order to use the `--mount=ssh` functionality, BuildKit needs to be enabled. Follow the instructions given [here](https://docs.docker.com/develop/develop-images/build_enhancements/#to-enable-buildkit-builds).
+
 ## Build
 ```bash
- docker build -t $(cat TAG) . --build-arg ssh_prv_key="$(cat ~/.ssh/id_rsa)" --build-arg ssh_pub_key="$(cat ~/.ssh/id_rsa.pub)"
+ docker build -t $(cat TAG) --ssh default ."
  ```
