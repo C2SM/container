@@ -3,5 +3,5 @@ In order to use the `--mount=ssh` functionality, BuildKit needs to be enabled. F
 
 ## Build
 ```bash
- docker build -t $(cat TAG) --ssh default ."
+ docker build -t $(cat TAG) --ssh default .
  ```
