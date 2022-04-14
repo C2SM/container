@@ -3,7 +3,7 @@ FROM c2sm/nvhpc:21.3-devel-cuda_multi-cuda11.2-ubuntu20.04-int2lm-deps
 
 #RUN --mount=type=ssh spack install -v int2lm@c2sm-master%nvhpc ^cmake%gcc
 
-RUN git clone git@github.com:C2SM-RCM/int2lm.git /opt/int2lm && \ 
+RUN --mount=type=ssh git clone git@github.com:C2SM-RCM/int2lm.git /opt/int2lm && \ 
     cd /opt/int2lm && \
     git checkout c2sm && \
     spack dev-build int2lm@c2sm-master%nvhpc ^cmake%gcc
