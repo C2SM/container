@@ -32,7 +32,7 @@ RUN mkdir -p /root/.ssh && \
     ssh-keyscan github.com > /root/.ssh/known_hosts
 
 RUN --mount=type=ssh git clone https://github.com/C2SM/spack-c2sm.git  /opt/spack-c2sm && \
-    cd /opt/spack-c2sm && git checkout docker && ./config.py -m container -u OFF -i $ROOT \
+    cd /opt/spack-c2sm && git checkout docker && ./config.py -m container -v develop -u OFF -i $ROOT \
     -p $ROOT -s $ROOT -c $ROOT
 
 RUN mkdir -p $SPACK_ROOT/opt/spack
