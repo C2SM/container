@@ -26,7 +26,7 @@ RUN apt-get -yqq update \
  && pip3 install boto3 \
  && rm -rf /var/lib/apt/lists/*
 
-# Authorize SSH Host
+ # Authorize SSH Host
 RUN mkdir -p /root/.ssh && \
     chmod 0700 /root/.ssh && \
     ssh-keyscan github.com > /root/.ssh/known_hosts
@@ -57,6 +57,19 @@ RUN mkdir -p /root/.spack \
         /root/.spack/modules.yaml \
  && rm -rf /root/*.* /run/nologin $SPACK_ROOT/.git
 
+
+# Add basic stuff needed for C2SM-packages
+RUN apt-get -yqq update \
+ && apt-get -yqq install --no-install-recommends \
+        gcc-8 \
+        g++-8 \
+        gfortran-8 \
+        cmake \
+        perl \
+ && locale-gen en_US.UTF-8 \
+ && pip3 install boto3 \
+ && rm -rf /var/lib/apt/lists/*
+
 # [WORKAROUND]
 # https://superuser.com/questions/1241548/
 #     xubuntu-16-04-ttyname-failed-inappropriate-ioctl-for-device#1253889
@@ -71,6 +84,8 @@ SHELL ["docker-shell"]
 RUN spack spec hdf5+mpi
 
 RUN spack compiler find
+
+RUN spack external find --not-buildable cmake perl python
 
 ENTRYPOINT ["/bin/bash", "/opt/spack/share/spack/docker/entrypoint.bash"]
 CMD ["interactive-shell"]
