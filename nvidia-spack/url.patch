@@ -1,0 +1,14 @@
+diff --git a/lib/spack/spack/util/url.py b/lib/spack/spack/util/url.py
+index 824b5fe..76868e0 100644
+--- a/lib/spack/spack/util/url.py
++++ b/lib/spack/spack/util/url.py
+@@ -343,7 +343,7 @@ def parse_git_url(url):
+ 
+ 
+ def require_url_format(url):
+-    ut = re.search(r'^(file://|http://|https://|ftp://|s3://|gs://|ssh://|git://|/)', url)
++    ut = re.search(r'^(file://|http://|https://|ftp://|s3://|gs://|ssh://|git\@|/)', url)
+     if not ut:
+         raise ValueError('Invalid url format from url: %s' % url)
+ 
+
