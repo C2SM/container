@@ -33,7 +33,10 @@ RUN mkdir -p /root/.ssh && \
 
 RUN --mount=type=ssh git clone https://github.com/C2SM/spack-c2sm.git  /opt/spack-c2sm && \
     cd /opt/spack-c2sm && git checkout docker && ./config.py -m container -u OFF -i $ROOT \
-    -p $ROOT -s $ROOT -c $ROOT
+    -p $ROOT -s $ROOT -c $ROOT -v develop
+
+COPY url.patch $SPACK_ROOT/url.patch
+RUN cd $SPACK_ROOT && git apply url.patch
 
 RUN mkdir -p $SPACK_ROOT/opt/spack
 
