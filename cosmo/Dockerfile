@@ -29,16 +29,11 @@ FROM nvcr.io/nvidia/nvhpc:21.3-runtime-cuda11.0-ubuntu20.04
 COPY --from=builder /opt/spack-install /opt/spack-install
 COPY --from=builder /opt/cosmo /opt/cosmo
 
-COPY  cosmo/cosmo/test/testsuite/work/cosmo-2e/test_1 /root/test_1
+RUN ln -s $(cat /opt/cosmo) /root/cosmo_cpu
 
-RUN ln -s $(cat /opt/cosmo) /root/test_1/cosmo_cpu
-
+# paths cannot be hardcoded in the future
 ENV GRIB_SAMPLES_PATH=/opt/spack-install/container/cosmo-eccodes-definitions/2.19.0.5/nvhpc/6odt5ecgbcadsebb5kst62zuoq5u7jna/cosmoDefinitions/samples
 ENV GRIB_DEFINITION_PATH=/opt/spack-install/container/cosmo-eccodes-definitions/2.19.0.5/nvhpc/6odt5ecgbcadsebb5kst62zuoq5u7jna/cosmoDefinitions/definitions/:/opt/spack-install/container/eccodes/2.19.0/nvhpc/tq2o4mafzz34jhqucwgdrz2s3wzpg5kd/share/eccodes/definitions
 
-#ENTRYPOINT ["/bin/bash", "/opt/spack/share/spack/docker/entrypoint.bash"]
-
-#ENTRYPOINT ["/bin/bash", "--rcfile", "/opt/cosmo.env", "-l"]
-#ENTRYPOINT ["/bin/bash", "--rcfile", "/etc/profile", "-l"]
-WORKDIR /root/test_1
-#CMD ["interactive-shell"]
+ENTRYPOINT ["/bin/bash", "--rcfile", "/etc/profile", "-l" ,"-c"]
+WORKDIR /root
