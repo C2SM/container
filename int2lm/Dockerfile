@@ -1,6 +1,6 @@
 # Build stage with Spack pre-installed and ready to be used
 FROM c2sm/nvhpc:21.3-devel-cuda_multi-ubuntu20.04-mpich as builder
-ENV INT2LM_SPEC="int2lm@c2sm-master%nvhpc ^cmake%gcc ^$MPICH_SPEC"
+ENV INT2LM_SPEC="int2lm@c2sm-master%nvhpc ^$MPICH_SPEC"
 
 # install dummy slurm
 RUN apt-get -yqq update \
@@ -41,6 +41,7 @@ RUN ln -s $(cat /opt/int2lm) /root/int2lm
 
 RUN ldconfig
 
-ENTRYPOINT ["/bin/bash", "--rcfile", "/etc/profile", "-l" ,"-c"]
+#ENTRYPOINT ["/bin/bash", "--rcfile", "/etc/profile", "-l" ,"-c"]
+ENTRYPOINT ["/bin/bash", "--rcfile", "/etc/profile", "-l"]
 WORKDIR /root
 
