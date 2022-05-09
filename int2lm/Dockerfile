@@ -1,6 +1,6 @@
 # Build stage with Spack pre-installed and ready to be used
-FROM c2sm/nvhpc:21.3-devel-cuda_multi-ubuntu20.04-mpich
-ENV INT2LM_SPEC="int2lm@c2sm-master%nvhpc ^cmake%gcc"
+FROM c2sm/nvhpc:21.3-devel-cuda_multi-ubuntu20.04-mpich as builder
+ENV INT2LM_SPEC="int2lm@c2sm-master%nvhpc ^cmake%gcc ^$MPICH_SPEC"
 
 # install dummy slurm
 RUN apt-get -yqq update \
@@ -28,7 +28,7 @@ RUN --mount=type=ssh spack install --only dependencies $INT2LM_SPEC
 
 RUN --mount=type=ssh spack install -v --only package $INT2LM_SPEC
 
-RUN echo $(spack find --paths int2lm | grep -o -P '/opt/spack-install/.*')/bin/int2lm > /opt/int2lm
+RUN echo $(spack find --paths int2lm | grep -o -P '/opt/spack-install/.*')/bin > /opt/int2lm
 
 # Bare OS image to run the installed executables
 FROM nvcr.io/nvidia/nvhpc:21.3-runtime-cuda11.0-ubuntu20.04
@@ -39,6 +39,8 @@ COPY --from=builder /etc/ld.so.conf.d/mpich.conf /etc/ld.so.conf.d/mpich.conf
 
 RUN ln -s $(cat /opt/int2lm) /root/int2lm
 
-ENTRYPOINT ["/bin/bash", "/opt/spack/share/spack/docker/entrypoint.bash"]
-CMD ["interactive-shell"]
+RUN ldconfig
+
+ENTRYPOINT ["/bin/bash", "--rcfile", "/etc/profile", "-l" ,"-c"]
+WORKDIR /root
 
