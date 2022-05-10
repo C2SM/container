@@ -25,22 +25,28 @@ RUN ln -fs /opt/libtree/libtree /usr/bin/libtree
 
 # install int2lm
 RUN --mount=type=ssh spack install --only dependencies $INT2LM_SPEC
+RUN --mount=type=ssh git clone git@github.com:C2SM-RCM/int2lm.git /opt/int2lm && \
+    cd /opt/int2lm && \
+    git checkout c2sm
 
-RUN --mount=type=ssh spack install -v --only package $INT2LM_SPEC
+#RUN --mount=type=ssh spack install -v --only package $INT2LM_SPEC
 
-RUN echo $(spack find --paths int2lm | grep -o -P '/opt/spack-install/.*')/bin > /opt/int2lm
+#RUN echo $(spack find --paths int2lm | grep -o -P '/opt/spack-install/.*')/bin > /opt/int2lm/int2lm
 
 # Bare OS image to run the installed executables
-FROM nvcr.io/nvidia/nvhpc:21.3-runtime-cuda11.0-ubuntu20.04
+#FROM nvcr.io/nvidia/nvhpc:21.3-runtime-cuda11.0-ubuntu20.04
 
-COPY --from=builder /opt/spack-install /opt/spack-install
-COPY --from=builder /opt/int2lm /opt/int2lm
-COPY --from=builder /etc/ld.so.conf.d/mpich.conf /etc/ld.so.conf.d/mpich.conf
+#COPY --from=builder /opt/spack-install /opt/spack-install
+#COPY --from=builder /opt/int2lm /opt/int2lm
+#COPY --from=builder /etc/ld.so.conf.d/mpich.conf /etc/ld.so.conf.d/mpich.conf
 
-RUN ln -s $(cat /opt/int2lm) /root/int2lm
+#RUN ln -s $(cat /opt/int2lm) /root/int2lm
 
-RUN ldconfig
+#RUN ldconfig
 
-ENTRYPOINT ["/bin/bash", "--rcfile", "/etc/profile", "-l" ,"-c"]
-WORKDIR /root
+#ENTRYPOINT ["/bin/bash", "--rcfile", "/etc/profile", "-l" ,"-c"]
+#ENTRYPOINT ["/bin/bash", "--rcfile", "/etc/profile", "-l"]
+#WORKDIR /root
 
+ENTRYPOINT ["/bin/bash", "/opt/spack/share/spack/docker/entrypoint.bash"]
+CMD ["interactive-shell"]
