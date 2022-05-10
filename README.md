@@ -7,3 +7,6 @@ Base image with all nvidia build tools and the c2sm-spack instance with nvhpc 21
 
 ## [mpich](mpich)
 Image on top of [nvidia-spack](nvidia-spack) providing mpich suitable for cosmo and int2lm
+
+## [cosmo:cpu](cosmo:cpu)
+Image on top of [mpich](mpich) providing an executable for COSMO on CPU (Validated on Piz Daint)
