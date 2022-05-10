@@ -1,5 +1,5 @@
 # Build stage with Spack pre-installed and ready to be used
-FROM c2sm/nvhpc:21.3-devel-cuda_multi-ubuntu20.04-mpich as builder
+FROM c2sm/spack-mpich:3.4.3 AS builder
 ENV INT2LM_SPEC="int2lm@c2sm-master%nvhpc ^$MPICH_SPEC"
 
 # install dummy slurm
