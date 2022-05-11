@@ -26,6 +26,10 @@ RUN ln -fs /opt/libtree/libtree /usr/bin/libtree
 # install int2lm
 RUN --mount=type=ssh spack install --only dependencies $INT2LM_SPEC
 
+# change name of linked mpich lib from mpich to mpichf90
+COPY int2lm-mpichf90.patch /opt/spack-c2sm/int2lm-mpichf90.patch
+RUN cd /opt/spack-c2sm && git apply int2lm-mpichf90.patch
+
 RUN --mount=type=ssh spack install -v --only package $INT2LM_SPEC
 
 RUN echo $(spack find --paths int2lm | grep -o -P '/opt/spack-install/.*')/bin > /opt/int2lm
