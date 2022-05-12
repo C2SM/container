@@ -16,13 +16,6 @@ RUN echo "  slurm:" >> /root/.spack/packages.yaml && \
     echo "      - spec: slurm%gcc" >> /root/.spack/packages.yaml && \
     echo "        prefix: /usr" >> /root/.spack/packages.yaml
 
-# install libtree
-RUN git clone https://github.com/haampie/libtree.git /opt/libtree && \ 
-    cd /opt/libtree && \
-    make LDFLAGS=-static
-
-RUN ln -fs /opt/libtree/libtree /usr/bin/libtree 
-
 # install int2lm
 RUN --mount=type=ssh spack install --only dependencies $INT2LM_SPEC
 
