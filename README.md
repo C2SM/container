@@ -10,3 +10,9 @@ Image on top of [nvidia-spack](nvidia-spack) providing mpich suitable for cosmo 
 
 ## cosmo:cpu
 Image on top of [mpich](mpich) providing an executable for COSMO on CPU (Validated on Piz Daint)
+
+## cosmo:gpu
+Image on top of [mpich](mpich) providing an executable for COSMO on GPU (Validated on Piz Daint)
+
+## int2lm
+Image on top of [mpich](mpich) providing an executable for INT2LM (Validated on Piz Daint)
