@@ -31,8 +31,8 @@ RUN mkdir -p /root/.ssh && \
     chmod 0700 /root/.ssh && \
     ssh-keyscan github.com > /root/.ssh/known_hosts
 
-RUN --mount=type=ssh git clone https://github.com/C2SM/spack-c2sm.git  /opt/spack-c2sm && \
-    cd /opt/spack-c2sm && git checkout docker && ./config.py -m container -u OFF -i $ROOT \
+RUN --mount=type=ssh git clone git@github.com:C2SM/spack-c2sm.git $ROOT/spack-c2sm && \
+    cd $ROOT/spack-c2sm && git checkout docker && ./config.py -m container -u OFF -i $ROOT \
     -p $ROOT -s $ROOT -c $ROOT -v develop --no_yaml_copy
 
 COPY url.patch $SPACK_ROOT/url.patch
