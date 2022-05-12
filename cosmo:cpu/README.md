@@ -7,6 +7,7 @@
 ```
 module load daint-gpu
 module load EasyBuild-custom/cscs 
+module load sarus
 eb skopeo-1.8.0.eb -rf
 module load skopeo/1.8.0
 skopeo login docker.io # pass your username and password when asked
