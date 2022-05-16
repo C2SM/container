@@ -1,5 +1,6 @@
 # syntax=docker/dockerfile:1.2
 FROM nvcr.io/nvidia/nvhpc:21.3-devel-cuda_multi-ubuntu20.04
+ENV SPACK_COMMIT=e24e71be6aec4e83b2d7a9023068cab377132bbe
 ENV ROOT=/opt
 ENV SPACK_ROOT=$ROOT/spack
 
@@ -30,6 +31,9 @@ RUN apt-get -yqq update \
 RUN mkdir -p /root/.ssh && \
     chmod 0700 /root/.ssh && \
     ssh-keyscan github.com > /root/.ssh/known_hosts
+
+RUN --mount=type=ssh git clone git@github.com:spack/spack.git $ROOT/spack && \
+    cd $ROOT/spack && git checkout $SPACK_COMMIT
 
 RUN --mount=type=ssh git clone git@github.com:C2SM/spack-c2sm.git $ROOT/spack-c2sm && \
     cd $ROOT/spack-c2sm && git checkout docker && ./config.py -m container -u OFF -i $ROOT \
