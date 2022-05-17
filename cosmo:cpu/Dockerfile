@@ -1,20 +1,27 @@
+# syntax=docker/dockerfile:1.4.0
 # Build stage with Spack pre-installed and ready to be used
 FROM c2sm/spack-mpich:3.4.3 AS builder
 ENV COSMO_SPEC="cosmo@c2sm-master%nvhpc cosmo_target=cpu cuda_arch=60 ~cppdycore ^$MPICH_SPEC"
 
 # install dummy slurm
-RUN apt-get -yqq update \
- && apt-get -yqq install --no-install-recommends \
-        slurm \
- && locale-gen en_US.UTF-8 \
- && pip3 install boto3 \
- && rm -rf /var/lib/apt/lists/*
 
-RUN echo "  slurm:" >> /root/.spack/packages.yaml && \
-    echo "      buildable: false" >> /root/.spack/packages.yaml && \
-    echo "      externals:" >> /root/.spack/packages.yaml && \
-    echo "      - spec: slurm%gcc" >> /root/.spack/packages.yaml && \
-    echo "        prefix: /usr" >> /root/.spack/packages.yaml
+RUN <<EOF
+apt-get -yqq update
+apt-get -yqq install --no-install-recommends
+    slurm
+locale-gen en_US.UTF-8
+pip3 install boto3
+rm -rf /var/lib/apt/lists/*
+EOF
+
+COPY <<EOF /tmp/slurm.yaml
+  slurm:
+      buildable: false
+      externals:
+      - spec: slurm%gcc
+        prefix: /usr
+EOF
+RUN cat /tmp/slurm.yaml >> /root/.spack/packages.yaml && rm -f /tmp/slurm.yaml
 
 # install COSMO dependencies
 RUN --mount=type=ssh spack installcosmo --only dependencies $COSMO_SPEC
