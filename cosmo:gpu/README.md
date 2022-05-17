@@ -20,3 +20,7 @@ sarus load cosmo_gpu.tar c2sm/cosmo:gpu
 2. Go to folder ```cosmo/test/testsuite```
 3. ```./data/get_data.sh```
 4. ```sbatch submit.docker_gpu.slurm```
+
+# Performance
+A comparison of performances between a native build and the container can be seen on the Jenkins-plan
+[container_benchmark](https://jenkins-mch.cscs.ch/job/container_benchmark/)
