@@ -1,6 +1,6 @@
 # Build stage with Spack pre-installed and ready to be used
-FROM c2sm/spack-mpich:3.4.3 AS builder
-ENV INT2LM_SPEC="int2lm@c2sm-master%nvhpc ^$MPICH_SPEC"
+FROM c2sm/nvhpc:21.3-devel-cuda_multi-ubuntu20.04-spack AS builder
+ENV INT2LM_SPEC="int2lm@c2sm-master%nvhpc ~parallel ^hdf5@1.12.2%nvhpc@21.3 ~mpi ^netcdf-c ~mpi "
 
 # install dummy slurm
 RUN apt-get -yqq update \
@@ -18,10 +18,6 @@ RUN echo "  slurm:" >> /root/.spack/packages.yaml && \
 
 # install int2lm dependencies
 RUN --mount=type=ssh spack install --only dependencies $INT2LM_SPEC
-
-# change name of linked mpich lib from mpich to mpichf90
-COPY int2lm-mpichf90.patch /opt/spack-c2sm/int2lm-mpichf90.patch
-RUN cd /opt/spack-c2sm && git apply int2lm-mpichf90.patch
 
 # install int2lm
 RUN --mount=type=ssh spack install -v --only package $INT2LM_SPEC

@@ -28,10 +28,6 @@ RUN echo "  slurm:" >> /root/.spack/packages.yaml && \
     echo "      - spec: cmake@3.16.3%gcc" >> /root/.spack/packages.yaml && \
      echo "        prefix: /usr " >> /root/.spack/packages.yaml
 
-# CMake needs the CudaToolkit path
-COPY CudaToolkit_Cmake.patch /opt/spack-c2sm/CudaToolkit_Cmake.patch
-RUN cd /opt/spack-c2sm && git apply CudaToolkit_Cmake.patch
-
 # install dependencies
 RUN --mount=type=ssh spack installcosmo --only dependencies $COSMO_SPEC
 

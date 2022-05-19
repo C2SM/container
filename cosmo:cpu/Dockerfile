@@ -16,10 +16,6 @@ RUN echo "  slurm:" >> /root/.spack/packages.yaml && \
     echo "      - spec: slurm%gcc" >> /root/.spack/packages.yaml && \
     echo "        prefix: /usr" >> /root/.spack/packages.yaml
 
-# CMake spec needs to be without "%gcc"
-COPY ECCODES_CMake_remove_gcc.patch /opt/spack-c2sm/ECCODES_CMake_remove_gcc.patch
-RUN cd /opt/spack-c2sm && git apply ECCODES_CMake_remove_gcc.patch
-
 # install COSMO dependencies
 RUN --mount=type=ssh spack installcosmo --only dependencies $COSMO_SPEC
 
