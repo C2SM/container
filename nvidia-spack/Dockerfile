@@ -32,15 +32,36 @@ RUN mkdir -p /root/.ssh && \
     chmod 0700 /root/.ssh && \
     ssh-keyscan github.com > /root/.ssh/known_hosts
 
+# clone spack
 RUN --mount=type=ssh git clone git@github.com:spack/spack.git $ROOT/spack && \
     cd $ROOT/spack && git checkout $SPACK_COMMIT
 
-RUN --mount=type=ssh git clone git@github.com:C2SM/spack-c2sm.git $ROOT/spack-c2sm && \
-    cd $ROOT/spack-c2sm && git checkout docker && ./config.py -m container -u OFF -i $ROOT \
+# clone c2sm-spack
+RUN --mount=type=ssh git clone git@github.com:C2SM/spack-c2sm.git $ROOT/spack-c2sm 
+
+# Apply patches for C2SM packages
+
+# Eccodes: strip "%gcc" from CMake
+COPY patches/ECCODES_CMake_remove_gcc.patch $ROOT/spack-c2sm/ECCODES_CMake_remove_gcc.patch
+RUN cd $ROOT/spack-c2sm && git apply ECCODES_CMake_remove_gcc.patch
+
+# Cosmo: strip "%gcc" from CMake
+COPY patches/COSMO_CMake_remove_gcc.patch $ROOT/spack-c2sm/COSMO_CMake_remove_gcc.patch
+RUN cd $ROOT/spack-c2sm && git apply COSMO_CMake_remove_gcc.patch
+
+# Spack-C2SM: setup config for host "container"
+COPY patches/SPACK_C2SM_container_config.patch $ROOT/spack-c2sm/SPACK_C2SM_container_config.patch
+RUN cd $ROOT/spack-c2sm && git apply SPACK_C2SM_container_config.patch
+
+# setup spack-c2sm instance
+# Note: clone of spack is skipped, because already installed previously
+RUN cd $ROOT/spack-c2sm && ./config.py -m container -u OFF -i $ROOT \
     -p $ROOT -s $ROOT -c $ROOT -v develop --no_yaml_copy
 
-COPY url.patch $SPACK_ROOT/url.patch
-RUN cd $SPACK_ROOT && git apply url.patch
+# Apply patch for spack
+COPY patches/SPACK_url.patch $SPACK_ROOT/SPACK_url.patch
+RUN cd $SPACK_ROOT && git apply SPACK_url.patch
+
 
 RUN mkdir -p $SPACK_ROOT/opt/spack
 
