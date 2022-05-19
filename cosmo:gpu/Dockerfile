@@ -38,7 +38,7 @@ RUN --mount=type=ssh spack installcosmo -v --only package $COSMO_SPEC
 RUN echo $(spack find --paths cosmo | grep -o -P "/opt/spack-install/.*")/bin/cosmo_gpu > /opt/cosmo
 
 # dump spack-env to file
-RUN echo $(spack load --sh $INT2LM_SPEC) > /opt/spack-env
+RUN echo $(spack load --sh $COSMO_SPEC) > /opt/spack-env
 
 # Bare OS image to run the installed executables
 FROM nvcr.io/nvidia/nvhpc:21.3-runtime-cuda11.0-ubuntu20.04
