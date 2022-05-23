@@ -28,10 +28,6 @@ RUN echo "  slurm:" >> /root/.spack/packages.yaml && \
     echo "      - spec: cmake@3.16.3%gcc" >> /root/.spack/packages.yaml && \
      echo "        prefix: /usr " >> /root/.spack/packages.yaml
 
-# CMake needs the CudaToolkit path
-COPY CudaToolkit_Cmake.patch /opt/spack-c2sm/CudaToolkit_Cmake.patch
-RUN cd /opt/spack-c2sm && git apply CudaToolkit_Cmake.patch
-
 # install dependencies
 RUN --mount=type=ssh spack installcosmo --only dependencies $COSMO_SPEC
 
@@ -40,23 +36,22 @@ RUN --mount=type=ssh spack installcosmo -v --only package $COSMO_SPEC
 
 # dump paths to file
 RUN echo $(spack find --paths cosmo | grep -o -P "/opt/spack-install/.*")/bin/cosmo_gpu > /opt/cosmo
-RUN echo $(spack find --paths cosmo-eccodes-definitions | grep -o -P "/opt/spack-install/.*") > /opt/cosmo-eccodes-definitions
-RUN echo $(spack find --paths eccodes | grep -o -P "/opt/spack-install/.*") > /opt/eccodes
+
+# dump spack-env to file
+RUN echo $(spack load --sh $COSMO_SPEC) > /opt/spack-env
 
 # Bare OS image to run the installed executables
 FROM nvcr.io/nvidia/nvhpc:21.3-runtime-cuda11.0-ubuntu20.04
 
 COPY --from=builder /opt/spack-install /opt/spack-install
 COPY --from=builder /opt/cosmo /opt/cosmo
-COPY --from=builder /opt/cosmo-eccodes-definitions /opt/cosmo-eccodes-definitions
-COPY --from=builder /opt/eccodes /opt/eccodes
+COPY --from=builder /opt/spack-env /opt/spack-env
 COPY --from=builder  /etc/ld.so.conf.d/mpich.conf  /etc/ld.so.conf.d/mpich.conf
 
 RUN ln -s $(cat /opt/cosmo) /root/cosmo_gpu
 
-# GRIB definition paths
-RUN echo "export GRIB_SAMPLES_PATH=$(cat /opt/cosmo-eccodes-definitions)/cosmoDefinitions/samples" >> /etc/profile
-RUN echo "export GRIB_DEFINITION_PATH=$(cat /opt/cosmo-eccodes-definitions)/cosmoDefinitions/definitions/:$(cat /opt/eccodes)/share/eccodes/definitions" >> /etc/profile
+# put spack-env into profile 
+RUN echo "$(cat opt/spack-env)" >> /etc/profile
 
 RUN ldconfig
 

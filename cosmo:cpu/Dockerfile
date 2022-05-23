@@ -24,24 +24,23 @@ RUN --mount=type=ssh spack installcosmo -v --only package $COSMO_SPEC
 
 # dump paths to file
 RUN echo $(spack find --paths cosmo | grep -o -P "/opt/spack-install/.*")/bin/cosmo_cpu > /opt/cosmo
-RUN echo $(spack find --paths cosmo-eccodes-definitions | grep -o -P "/opt/spack-install/.*") > /opt/cosmo-eccodes-definitions
-RUN echo $(spack find --paths eccodes | grep -o -P "/opt/spack-install/.*") > /opt/eccodes
+
+# dump spack-env to file
+RUN echo $(spack load --sh $COSMO_SPEC) > /opt/spack-env
 
 # Bare OS image to run the installed executables
 FROM nvcr.io/nvidia/nvhpc:21.3-runtime-cuda11.0-ubuntu20.04
 
 COPY --from=builder /opt/spack-install /opt/spack-install
 COPY --from=builder /opt/cosmo /opt/cosmo
-COPY --from=builder /opt/cosmo-eccodes-definitions /opt/cosmo-eccodes-definitions
-COPY --from=builder /opt/eccodes /opt/eccodes
+COPY --from=builder /opt/spack-env /opt/spack-env
 COPY --from=builder  /etc/ld.so.conf.d/mpich.conf  /etc/ld.so.conf.d/mpich.conf
 
 # link COSMO executable
 RUN ln -s $(cat /opt/cosmo) /root/cosmo_cpu
 
-# GRIB definition paths
-RUN echo "export GRIB_SAMPLES_PATH=$(cat /opt/cosmo-eccodes-definitions)/cosmoDefinitions/samples" >> /etc/profile
-RUN echo "export GRIB_DEFINITION_PATH=$(cat /opt/cosmo-eccodes-definitions)/cosmoDefinitions/definitions/:$(cat /opt/eccodes)/share/eccodes/definitions" >> /etc/profile
+# put spack-env into profile 
+RUN echo "$(cat opt/spack-env)" >> /etc/profile
 
 RUN ldconfig
 
