@@ -1,5 +1,5 @@
 # Build stage with Spack pre-installed and ready to be used
-FROM c2sm/spack-mpich:3.4.3 AS builder
+FROM docker.io/c2sm/spack-mpich:3.4.3 AS builder
 ENV COSMO_SPEC="cosmo@c2sm-master%nvhpc cosmo_target=cpu cuda_arch=60 ~cppdycore ^$MPICH_SPEC"
 
 # install dummy slurm
