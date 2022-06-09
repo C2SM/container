@@ -1,5 +1,7 @@
 # syntax=docker/dockerfile:1.2
 FROM nvcr.io/nvidia/nvhpc:21.3-devel-cuda_multi-ubuntu20.04
+ENV SPACK_COMMIT=e24e71be6aec4e83b2d7a9023068cab377132bbe
+ENV C2SM_SPACK_COMMIT=ccbe8bcdc6e84845f8d50ab627429b5b4494ceeb
 ENV ROOT=/opt
 ENV SPACK_ROOT=$ROOT/spack
 
@@ -31,12 +33,45 @@ RUN mkdir -p /root/.ssh && \
     chmod 0700 /root/.ssh && \
     ssh-keyscan github.com > /root/.ssh/known_hosts
 
+# clone spack
+RUN --mount=type=ssh git clone git@github.com:spack/spack.git $ROOT/spack && \
+    cd $ROOT/spack && git checkout $SPACK_COMMIT
+
+# clone c2sm-spack
 RUN --mount=type=ssh git clone git@github.com:C2SM/spack-c2sm.git $ROOT/spack-c2sm && \
-    cd $ROOT/spack-c2sm && git checkout docker && ./config.py -m container -u OFF -i $ROOT \
+    cd $ROOT/spack-c2sm && git checkout $C2SM_SPACK_COMMIT
+
+# Apply patches for C2SM packages
+
+# Eccodes: strip "%gcc" from CMake
+COPY patches/ECCODES_CMake_remove_gcc.patch $ROOT/spack-c2sm/ECCODES_CMake_remove_gcc.patch
+RUN cd $ROOT/spack-c2sm && git apply ECCODES_CMake_remove_gcc.patch
+
+# Cosmo: strip "%gcc" from CMake
+COPY patches/COSMO_CMake_remove_gcc.patch $ROOT/spack-c2sm/COSMO_CMake_remove_gcc.patch
+RUN cd $ROOT/spack-c2sm && git apply COSMO_CMake_remove_gcc.patch
+
+# Cosmo-Dycore: pass CudaToolkitHome as CMake arguments
+COPY patches/COSMO-DYCORE_CudaToolkit_CMake_arg.patch $ROOT/spack-c2sm/COSMO-DYCORE_CudaToolkit_CMake_arg.patch
+RUN cd $ROOT/spack-c2sm && git apply COSMO-DYCORE_CudaToolkit_CMake_arg.patch
+
+# Int2lm: change lib64 to lib, link to libmpichf90 instead of libmpich
+COPY patches/INT2LM_lib64_to_lib.patch $ROOT/spack-c2sm/INT2LM_lib64_to_lib.patch
+RUN cd $ROOT/spack-c2sm && git apply INT2LM_lib64_to_lib.patch
+
+# Spack-C2SM: setup config for host "container"
+COPY patches/SPACK_C2SM_container_config.patch $ROOT/spack-c2sm/SPACK_C2SM_container_config.patch
+RUN cd $ROOT/spack-c2sm && git apply SPACK_C2SM_container_config.patch
+
+# setup spack-c2sm instance
+# Note: clone of spack is skipped, because already installed previously
+RUN cd $ROOT/spack-c2sm && ./config.py -m container -u OFF -i $ROOT \
     -p $ROOT -s $ROOT -c $ROOT -v develop --no_yaml_copy
 
-COPY url.patch $SPACK_ROOT/url.patch
-RUN cd $SPACK_ROOT && git apply url.patch
+# Apply patch for spack
+COPY patches/SPACK_url.patch $SPACK_ROOT/SPACK_url.patch
+RUN cd $SPACK_ROOT && git apply SPACK_url.patch
+
 
 RUN mkdir -p $SPACK_ROOT/opt/spack
 
