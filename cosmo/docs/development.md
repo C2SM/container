@@ -1,5 +1,5 @@
 # Development
-Important information about the devlopment of the Dockerfiles
+Important information about the development of the Dockerfiles
 
 ## Build
 #### Docker
