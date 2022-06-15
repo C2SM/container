@@ -8,7 +8,8 @@ The image is taken mainly from the [official Spack Dockerfile](https://github.co
 It provides:
   * Nvidia Build Tools
   * nvhpc 21.3
-  * gcc 8.4.0/9.3.0
+  * gcc 8.4.0
+  * gcc 9.3.0
   * c2sm-spack instance
 
 Spack-c2sm and the underlying spack version are frozen.
@@ -34,11 +35,32 @@ At the very end of the Dockerfile a few common packages are preinstalled and add
 using ```spack external find```.
 
 ### [mpich](../mpich)
-This image contains an installation of mpich to reduce build-time.
-To ensure every subsequent installation with Spack uses the preinstalled mpich,
+This Dockerfile installs mpich to reduce build-time.
+To ensure subsequent installation with Spack uses the preinstalled mpich,
 a variable is set:
 ```dockerfile
 ENV MPICH_SPEC="mpich@3.4.3%nvhpc@21.3~argobots~cuda+fortran+hwloc+hydra+libxml2+pci+romio~slurm~two_level_namespace~verbs+wrapperrpath datatype-engine=auto device=ch4 netmod=ofi pmi=pmi ^findutils%gcc"
+```
+### [int2lm](../int2lm)
+This image installs int2lm with the the following spec:
+```dockerfile
+ENV INT2LM_SPEC="int2lm@c2sm-master%nvhpc ^$MPICH_SPEC "
+```
+The build is split in two parts to decrease build-times during developments:
+```dockerfile
+# install int2lm dependencies
+RUN --mount=type=ssh spack install --fail-fast --only dependencies $INT2LM_SPEC
+
+# install int2lm
+RUN --mount=type=ssh spack install --only package $INT2LM_SPEC
+
+```
+
+In order to load the correct environment variables at runtime, i.e. ```GRIB_DEFINITION_PATH```
+the command ```spack load --sh``` is written to ```/etc/profile```.
+The runtime enviromnment is loaded in the entrypoint of the Dockerfile:
+```dockerfile
+ENTRYPOINT ["/bin/bash", "--rcfile", "/etc/profile", "-l" , "-c"]
 ```
 
 ## Build
