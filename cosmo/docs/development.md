@@ -4,6 +4,7 @@ Important information about the development of the Dockerfiles
 # Image structure
 Many of the images contain the same patterns to split the build-process, load the environment or apply a hack to make it work.
 The most important ones are listed below:
+
 #### Install dummy slurm
 COSMO and INT2LM both have slurm as a runtime dependency. Since we onle use the binaries, but not any infrastructure from withing the container,
 slurm is not used. To save build-time a dummy slurm installation is passed to spack via ```packages.yaml```:
@@ -25,6 +26,7 @@ RUN echo $(spack load --sh $COSMO_SPEC) > /opt/spack-env
 The content of ```/opt/spack-env``` is copied to the lightweight runtime image and added to ```/etc/profile```:
 ```dockerfile
 COPY --from=builder /opt/spack-env /opt/spack-env
+
 ...
 
 # put spack-env into profile 
@@ -93,45 +95,16 @@ This Dockerfile install cosmo on GPU with the following spec:
 ENV COSMO_SPEC="cosmo@c2sm-master%nvhpc cosmo_target=gpu cuda_arch=60 ^$DYCORE_SPEC  ^$MPICH_SPEC"
 ```
 
-The build is split in two parts to decrease build-times during developments:
-```dockerfile
-# install COSMO dependencies
-RUN --mount=type=ssh spack installcosmo --only dependencies $COSMO_SPEC
-
-# install COSMO
-RUN --mount=type=ssh spack installcosmo -v --only package $COSMO_SPEC
-```
-
 ### [cosmo:cpu](../cosmo\:cpu)
 This Dockerfile install cosmo on CPU with the following spec:
 ```dockerfile
 ENV COSMO_SPEC="cosmo@c2sm-master%nvhpc cosmo_target=cpu cuda_arch=60 ~cppdycore ^$MPICH_SPEC"
 ```
-
-The build is split in two parts to decrease build-times during developments:
-```dockerfile
-# install COSMO dependencies
-RUN --mount=type=ssh spack installcosmo --only dependencies $COSMO_SPEC
-
-# install COSMO
-RUN --mount=type=ssh spack installcosmo -v --only package $COSMO_SPEC
-```
-
 ### [int2lm](../int2lm)
 This image installs int2lm with the the following spec:
 ```dockerfile
 ENV INT2LM_SPEC="int2lm@c2sm-master%nvhpc ^$MPICH_SPEC "
 ```
-The build is split in two parts to decrease build-times during developments:
-```dockerfile
-# install int2lm dependencies
-RUN --mount=type=ssh spack install --fail-fast --only dependencies $INT2LM_SPEC
-
-# install int2lm
-RUN --mount=type=ssh spack install --only package $INT2LM_SPEC
-```
-
-
 
 ## Build
 #### Docker
