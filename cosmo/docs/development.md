@@ -41,6 +41,48 @@ a variable is set:
 ```dockerfile
 ENV MPICH_SPEC="mpich@3.4.3%nvhpc@21.3~argobots~cuda+fortran+hwloc+hydra+libxml2+pci+romio~slurm~two_level_namespace~verbs+wrapperrpath datatype-engine=auto device=ch4 netmod=ofi pmi=pmi ^findutils%gcc"
 ```
+
+### [cosmo:gpu](../cosmo\:gpu)
+Spack currently builds boost without any variant. Therefore we explicitely add the following variants to the spec:
+
+```dockerfile
+ENV BOOST_SPEC="boost@1.67%gcc +program_options +system"
+```
+The Dycore needs some specifiv variants too:
+
+```dockerfile
+ENV DYCORE_SPEC="cosmo-dycore@c2sm-master%gcc@8.4.0 cuda_arch=60 ^cuda%gcc ^$BOOST_SPEC"
+```
+This leads to the following Cosmo spec:
+This Dockerfile install cosmo on GPU with the following spec:
+```dockerfile
+ENV COSMO_SPEC="cosmo@c2sm-master%nvhpc cosmo_target=gpu cuda_arch=60 ^$DYCORE_SPEC  ^$MPICH_SPEC"
+```
+
+The build is split in two parts to decrease build-times during developments:
+```dockerfile
+# install COSMO dependencies
+RUN --mount=type=ssh spack installcosmo --only dependencies $COSMO_SPEC
+
+# install COSMO
+RUN --mount=type=ssh spack installcosmo -v --only package $COSMO_SPEC
+```
+
+### [cosmo:cpu](../cosmo\:cpu)
+This Dockerfile install cosmo on CPU with the following spec:
+```dockerfile
+ENV COSMO_SPEC="cosmo@c2sm-master%nvhpc cosmo_target=cpu cuda_arch=60 ~cppdycore ^$MPICH_SPEC"
+```
+
+The build is split in two parts to decrease build-times during developments:
+```dockerfile
+# install COSMO dependencies
+RUN --mount=type=ssh spack installcosmo --only dependencies $COSMO_SPEC
+
+# install COSMO
+RUN --mount=type=ssh spack installcosmo -v --only package $COSMO_SPEC
+```
+
 ### [int2lm](../int2lm)
 This image installs int2lm with the the following spec:
 ```dockerfile
@@ -53,7 +95,6 @@ RUN --mount=type=ssh spack install --fail-fast --only dependencies $INT2LM_SPEC
 
 # install int2lm
 RUN --mount=type=ssh spack install --only package $INT2LM_SPEC
-
 ```
 
 In order to load the correct environment variables at runtime, i.e. ```GRIB_DEFINITION_PATH```
