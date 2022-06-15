@@ -2,6 +2,40 @@
 Important information about the development of the Dockerfiles
 
 # Image structure
+Many of the images contain the same patterns to split the build-process, load the environment or apply a hack to make it work.
+The most important ones are listed below:
+#### Install dummy slurm
+COSMO and INT2LM both have slurm as a runtime dependency. Since we onle use the binaries, but not any infrastructure from withing the container,
+slurm is not used. To save build-time a dummy slurm installation is passed to spack via ```packages.yaml```:
+
+```dockerfile
+RUN echo "  slurm:" >> /root/.spack/packages.yaml && \
+    echo "      buildable: false" >> /root/.spack/packages.yaml && \
+    echo "      externals:" >> /root/.spack/packages.yaml && \
+    echo "      - spec: slurm%gcc" >> /root/.spack/packages.yaml && \
+    echo "        prefix: /usr" >> /root/.spack/packages.yaml
+```
+#### Load runtime environment with Spack
+In order to load the correct environment variables at runtime, i.e. ```GRIB_DEFINITION_PATH```
+the command ```spack load --sh``` is written to ```/etc/profile```:
+```dockerfile
+# dump spack-env to file
+RUN echo $(spack load --sh $COSMO_SPEC) > /opt/spack-env
+```
+The content of ```/opt/spack-env``` is copied to the lightweight runtime image and added to ```/etc/profile```:
+```dockerfile
+COPY --from=builder /opt/spack-env /opt/spack-env
+...
+
+# put spack-env into profile 
+RUN echo "$(cat opt/spack-env)" >> /etc/profile
+```
+
+Finally the runtime enviromnment is loaded in the entrypoint of the Dockerfile:
+```dockerfile
+ENTRYPOINT ["/bin/bash", "--rcfile", "/etc/profile", "-l" , "-c"]
+```
+
 ### [nvidia-spack](../nvidia-spack)
 The image is taken mainly from the [official Spack Dockerfile](https://github.com/spack/spack/blob/develop/share/spack/templates/container/bootstrap-base.dockerfile).
 
@@ -97,12 +131,7 @@ RUN --mount=type=ssh spack install --fail-fast --only dependencies $INT2LM_SPEC
 RUN --mount=type=ssh spack install --only package $INT2LM_SPEC
 ```
 
-In order to load the correct environment variables at runtime, i.e. ```GRIB_DEFINITION_PATH```
-the command ```spack load --sh``` is written to ```/etc/profile```.
-The runtime enviromnment is loaded in the entrypoint of the Dockerfile:
-```dockerfile
-ENTRYPOINT ["/bin/bash", "--rcfile", "/etc/profile", "-l" , "-c"]
-```
+
 
 ## Build
 #### Docker
