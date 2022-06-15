@@ -1,8 +1,8 @@
 # Development
 Important information about the development of the Dockerfiles
 
-## Image structure
-#### [nvidia-spack](../nvidia-spack)
+# Image structure
+### [nvidia-spack](../nvidia-spack)
 The image is taken mainly from the [official Spack Dockerfile](https://github.com/spack/spack/blob/develop/share/spack/templates/container/bootstrap-base.dockerfile).
 
 It provides:
@@ -33,6 +33,13 @@ All installed compiler are added to the spack-instance using ```spack compiler f
 At the very end of the Dockerfile a few common packages are preinstalled and added to the spack-instance
 using ```spack external find```.
 
+### [mpich](../mpich)
+This image contains an installation of mpich to reduce build-time.
+To ensure every subsequent installation with Spack uses the preinstalled mpich,
+a variable is set:
+```dockerfile
+ENV MPICH_SPEC="mpich@3.4.3%nvhpc@21.3~argobots~cuda+fortran+hwloc+hydra+libxml2+pci+romio~slurm~two_level_namespace~verbs+wrapperrpath datatype-engine=auto device=ch4 netmod=ofi pmi=pmi ^findutils%gcc"
+```
 
 ## Build
 #### Docker
