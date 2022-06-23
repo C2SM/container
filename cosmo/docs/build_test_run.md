@@ -35,7 +35,7 @@ skopeo copy --insecure-policy docker://c2sm/cosmo:cpu docker-archive:cosmo_cpu.t
 sarus load cosmo_cpu.tar c2sm/cosmo:cpu
 ```
 
-## Run testsuite
+## Test
 ```bash
 # a custom branch with some testsuite modifications is needed
 git clone --branch docker git@github.com:jonasjucker/cosmo.git
@@ -64,3 +64,12 @@ srun -u --ntasks-per-node=1 -n 8 -C gpu sarus run --mpi \
 `LD_PRELOAD` sets the correct cuda-runtime and needs to be executed before calling the binary of cosmo.
 
 For more information have a look at the [sarus example runscript](../submit.docker.slurm).
+
+## Performance (cosmo-2e, 1 member, 4h forecast)
+C2SM runs a daily [Jenkins plan](https://jenkins-mch.cscs.ch/view/C2SM/job/container_benchmark/) to check if performances vary between a native build and a container.
+So far no significant difference between the performance could be detected.
+
+#### Container
+![container](images/performance_container.png)
+#### Native build
+![native-build](images/performance_native_build.png)
