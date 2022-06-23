@@ -41,4 +41,18 @@ cosmo/test/testsuite
 sbatch submit.docker_cpu.slurm
 ```
 
-# Run full-scale experiment
+## Run full-scale experiment
+Only the executable is taken from the container. Therefore all other files like namelists or input data
+are provided on the filesystem.
+By using the `--mount=type=bind`option of Sarus the files are exposed to the container:
+
+```bash
+# sarus stores the image here
+docker_image=/load/c2sm/cosmo:gpu
+
+srun -u --ntasks-per-node=1 -n 8 -C gpu sarus run --mpi \                                                        
+       --mount=type=bind,src=$PWD,target=$PWD \                                                                  
+       --workdir=$PWD \                                                                                          
+       $docker_image 'export LD_PRELOAD="/usr/lib/x86_64-linux-gnu/libcuda.so" && /root/cosmo_gpu'
+```
+`LD_PRELOAD` sets the correct cuda-runtime and needs to be executed before calling the binary of cosmo.
