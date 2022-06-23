@@ -37,6 +37,15 @@ ENTRYPOINT ["/bin/bash", "--rcfile", "/etc/profile", "-l" , "-c"]
 
 ## Dockerfiles
 
+```mermaid
+graph TD;
+      nvidia-spack-->mpich;
+      mpich-->cosmo:cpu;
+      mpich-->cosmo:gpu;
+      mpich-->int2lm;
+
+```
+
 ### [nvidia-spack](../nvidia-spack)
 The image is taken mainly from the [official Spack Dockerfile](https://github.com/spack/spack/blob/develop/share/spack/templates/container/bootstrap-base.dockerfile).
 
