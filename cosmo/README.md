@@ -1,15 +1,17 @@
-## nvidia-spack
-Base image with all nvidia build tools and the c2sm-spack instance with nvhpc 21.3 and gcc 8.4.0/9.3.0
+# Dockerfiles for COSMO 6.0
+This set of Dockerfiles was created within the scope of a regular task submitted by several groups from the C2SM-community.
+The images can be built using Docker or Buildah. To run the images at scale Sarus was used on Piz Daint at CSCS.
 
-## mpich
-Image on top of [nvidia-spack](nvidia-spack) providing mpich suitable for cosmo and int2lm
+   * [Image structure](docs/build_test_run.md): Description of the Dockerfile's structure
+   * [Build and Run](docs/build_test_run.md): Learn how to build, test and run the images.
 
-## cosmo:cpu
-Image on top of [mpich](mpich) providing an executable for COSMO on CPU (Validated on Piz Daint)
+```mermaid
+graph TD;
+      nvidia-spack-->mpich;
+      mpich-->cosmo:cpu;
+      mpich-->cosmo:gpu;
+      mpich-->int2lm;
 
-## cosmo:gpu
-Image on top of [mpich](mpich) providing an executable for COSMO on GPU (Validated on Piz Daint)
+```
 
-## int2lm
-Image on top of [mpich](mpich) providing an executable for INT2LM (Validated on Piz Daint)
 
