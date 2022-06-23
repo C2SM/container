@@ -1,6 +1,3 @@
-# Development
-Important information about the development of the Dockerfiles
-
 ## Build
 #### Docker
 
@@ -11,6 +8,10 @@ Important information about the development of the Dockerfiles
  # build image from Dockerfile
  docker build -t $(cat TAG) --ssh default .
  ```
+ 
+ #### Buildah
+ add description here
+ 
 ## Fetch image from DockerHub
 
 ```bash
@@ -39,3 +40,5 @@ cosmo/test/testsuite
 # use sbumit.docker_gpu.slurm for GPU
 sbatch submit.docker_cpu.slurm
 ```
+
+# Run full-scale experiment
