@@ -10,8 +10,14 @@
  ```
  
  #### Buildah
- add description here
- 
+ The basic commands to build an image with Sarus is:
+ ```bash
+# start ssh-agent
+eval $(ssh-agent) > /dev/null
+ buildah bud -t $(cat TAG) --ssh=default --format=docker .
+ ```
+ Due to the root privileges needed to build an image additional steps are required.
+ Please have a look at the [example buildah script](../buildah.slurm).
 ## Fetch image from DockerHub
 
 ```bash
