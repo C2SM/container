@@ -2,7 +2,7 @@
 FROM docker.io/c2sm/spack-mpich:3.4.3 as builder
 ENV BOOST_SPEC="boost@1.67%gcc +program_options +system"
 ENV DYCORE_SPEC="cosmo-dycore@c2sm-master%gcc@8.4.0 cuda_arch=60 ^cuda%gcc ^$BOOST_SPEC"
-ENV COSMO_SPEC="cosmo@c2sm-master%nvhpc cosmo_target=gpu cuda_arch=60 ^$DYCORE_SPEC  ^$MPICH_SPEC"
+ENV COSMO_SPEC="cosmo@c2sm-master%nvhpc cosmo_target=gpu cuda_arch=80 ^$DYCORE_SPEC  ^$MPICH_SPEC"
 
 # install dummy slurm
 RUN apt-get -yqq update \
