@@ -28,6 +28,14 @@ eb skopeo-1.8.0.eb -rf
 module load skopeo/1.8.0
 skopeo login docker.io # pass your username and password when asked
 
+# In case the login does not work because of the following error:
+#
+#     FATAL[0007] 1 error occurred:
+#	     * mkdir /run/containers: permission denied
+# 
+# Set 
+#      export XDG_RUNTIME_DIR=$SCRATCH
+
 # fetch image "cosmo:cpu"
 skopeo copy --insecure-policy docker://c2sm/cosmo:cpu docker-archive:cosmo_cpu.tar
 
