@@ -1,0 +1,13 @@
+diff --git a/packages/cosmo/package.py b/packages/cosmo/package.py
+index 8a952d7..0c7d03c 100644
+--- a/packages/cosmo/package.py
++++ b/packages/cosmo/package.py
+@@ -124,7 +124,7 @@ class Cosmo(MakefilePackage):
+     variant('cuda_arch',
+             default='none',
+             description='Build with cuda_arch',
+-            values=('70', '60', '37'),
++            values=('80','70', '60', '37'),
+             multi=False)
+     variant(
+         'zlib_ng',

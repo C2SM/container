@@ -51,9 +51,17 @@ RUN cd $ROOT/spack-c2sm && git apply ECCODES_CMake_remove_gcc.patch
 COPY patches/COSMO_CMake_remove_gcc.patch $ROOT/spack-c2sm/COSMO_CMake_remove_gcc.patch
 RUN cd $ROOT/spack-c2sm && git apply COSMO_CMake_remove_gcc.patch
 
+# Cosmo-Dycore: allow cuda arch 80
+COPY patches/COSMO_cuda_arch.patch $ROOT/spack-c2sm/COSMO_cuda_arch.patch
+RUN cd $ROOT/spack-c2sm && git apply COSMO_cuda_arch.patch
+
 # Cosmo-Dycore: pass CudaToolkitHome as CMake arguments
 COPY patches/COSMO-DYCORE_CudaToolkit_CMake_arg.patch $ROOT/spack-c2sm/COSMO-DYCORE_CudaToolkit_CMake_arg.patch
 RUN cd $ROOT/spack-c2sm && git apply COSMO-DYCORE_CudaToolkit_CMake_arg.patch
+
+# Cosmo-Dycore: allow cuda arch 80
+COPY patches/COSMO-DYCORE_cuda_arch.patch $ROOT/spack-c2sm/COSMO-DYCORE_cuda_arch.patch
+RUN cd $ROOT/spack-c2sm && git apply COSMO-DYCORE_cuda_arch.patch
 
 # Int2lm: change lib64 to lib, link to libmpichf90 instead of libmpich
 COPY patches/INT2LM_lib64_to_lib.patch $ROOT/spack-c2sm/INT2LM_lib64_to_lib.patch
