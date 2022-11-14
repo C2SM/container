@@ -37,6 +37,9 @@ RUN git clone --depth 1 --recurse-submodules --shallow-submodules -b dev_v0.18.1
 RUN cd ${SPACK_PREFIX} && . ./setup-env.sh
 RUN echo $SPACK_SYSTEM_CONFIG_PATH
 
+# add Sergey spack package
+COPY packages/icon ${SPACK_PREFIX}/packages/icon
+
 RUN mkdir -p $SPACK_ROOT
 
 RUN ln -s $SPACK_ROOT/share/spack/docker/entrypoint.bash \
