@@ -34,10 +34,10 @@ RUN mkdir -p /root/.ssh && \
 
 # setup spack-c2sm instance
 RUN git clone --depth 1 --recurse-submodules --shallow-submodules -b dev_v0.18.1 https://github.com/C2SM/spack-c2sm.git ${SPACK_PREFIX}
-RUN cd ${SPACK_PREFIX} && git rev-parse --verify HEAD && . ./setup-env.sh && spack compiler find && spack external find --all
+RUN cd ${SPACK_PREFIX} && . ./setup-env.sh
 RUN echo $SPACK_SYSTEM_CONFIG_PATH
 
-UN mkdir -p $SPACK_ROOT
+RUN mkdir -p $SPACK_ROOT
 
 RUN ln -s $SPACK_ROOT/share/spack/docker/entrypoint.bash \
     /usr/local/bin/docker-shell \
@@ -74,4 +74,4 @@ RUN spack compiler find
 RUN spack external find --not-buildable cmake perl python
 
 ENTRYPOINT ["/bin/bash", "/root/c2sm-spack/spack/share/spack/docker/entrypoint.bash"]
-CMD ["docker-shell"]
+CMD ["interactive-shell"]
