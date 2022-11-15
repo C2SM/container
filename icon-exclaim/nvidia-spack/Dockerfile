@@ -82,6 +82,13 @@ RUN spack compiler find
 
 RUN spack external find --not-buildable cmake perl python
 
+# add cuda 11.0 manually
+RUN echo "  cuda:" >> /root/.spack/packages.yaml && \
+    echo "      buildable: false" >> /root/.spack/packages.yaml && \
+    echo "      externals:" >> /root/.spack/packages.yaml && \
+    echo "      - spec: cuda@11.0.221%gcc" >> /root/.spack/packages.yaml && \
+    echo "        prefix: /opt/nvidia/hpc_sdk/Linux_x86_64/21.3/cuda/11.0/" >> /root/.spack/packages.yaml
+
 RUN spack spec icon@2.6.4%nvhpc ~mpi ^hdf5@1.12.2%gcc@9.3.0 ~mpi
 
 ENTRYPOINT ["/bin/bash", "/root/c2sm-spack/spack/share/spack/docker/entrypoint.bash"]
