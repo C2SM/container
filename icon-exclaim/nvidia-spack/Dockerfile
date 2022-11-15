@@ -37,8 +37,14 @@ RUN git clone --depth 1 --recurse-submodules --shallow-submodules -b dev_v0.18.1
 RUN cd ${SPACK_PREFIX} && . ./setup-env.sh
 RUN echo $SPACK_SYSTEM_CONFIG_PATH
 
-# add Sergey spack package
+# add additional packages from Sergey
 COPY packages/icon ${SPACK_PREFIX}/packages/icon
+COPY packages/rttov ${SPACK_PREFIX}/packages/rttov
+COPY packages/libcdi-pio ${SPACK_PREFIX}/packages/libcdi-pio
+COPY packages/yaxt ${SPACK_PREFIX}/packages/yaxt
+COPY packages/yac ${SPACK_PREFIX}/packages/yac
+COPY packages/scales-ppm ${SPACK_PREFIX}/packages/scales-ppm
+
 
 RUN mkdir -p $SPACK_ROOT
 
@@ -75,6 +81,8 @@ RUN spack spec hdf5+mpi
 RUN spack compiler find
 
 RUN spack external find --not-buildable cmake perl python
+
+RUN spack spec icon@2.6.4%nvhpc ~mpi ^hdf5@1.12.2%gcc@9.3.0 ~mpi
 
 ENTRYPOINT ["/bin/bash", "/root/c2sm-spack/spack/share/spack/docker/entrypoint.bash"]
 CMD ["interactive-shell"]
