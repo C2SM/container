@@ -14,6 +14,10 @@ class Icon(AutotoolsPackage):
 
     version('develop', submodules=True)
     version('2.6.4', tag='master', submodules=True)
+    version('exclaim-master',
+            branch='master',
+            git='ssh://git@github.com/C2SM/icon-exclaim.git',
+            submodules=True)
 
     # Model Features:
     variant('atmo',
