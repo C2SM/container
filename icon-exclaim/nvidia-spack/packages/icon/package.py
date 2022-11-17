@@ -10,7 +10,7 @@ class Icon(AutotoolsPackage):
     """Icosahedral Nonhydrostatic Weather and Climate Model."""
 
     homepage = "https://code.mpimet.mpg.de/projects/iconpublic"
-    git = "git@github.com:C2SM/icon-exclaim.git"
+    git = "ssh://git@github.com/C2SM/icon-exclaim.git"
 
     version('develop', submodules=True)
     version('2.6.4', tag='master', submodules=True)
