@@ -4,7 +4,9 @@ ENV SPACK_PREFIX=/root/c2sm-spack
 ENV SPACK_SYSTEM_CONFIG_PATH=/root/c2sm-spack/sysconfigs/unknown
 ENV SPACK_ROOT=/root/c2sm-spack/spack
 
+# This version tries to build without MPI, first dependencies
 RUN --mount=type=ssh spack install --only dependencies --fail-fast icon@exclaim-master%nvhpc ~mpi ^netlib-lapack ~external-blas
+# Now ICON itself
 RUN --mount=type=ssh spack install --fail-fast icon@exclaim-master%nvhpc ~mpi ^netlib-lapack ~external-blas
 
 WORKDIR /root
