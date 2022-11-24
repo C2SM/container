@@ -13,7 +13,11 @@ class Icon(AutotoolsPackage):
     git = "ssh://git@github.com/C2SM/icon-exclaim.git"
 
     version('develop', submodules=True)
-    version('2.6.4', tag='container_build', submodules=True)
+    version('2.6.4', tag='master', submodules=True)
+    version('container_build',
+            branch='container_build',
+            git='ssh://git@github.com/C2SM/icon-exclaim.git',
+            submodules=True)
     version('exclaim-master',
             branch='master',
             git='ssh://git@github.com/C2SM/icon-exclaim.git',

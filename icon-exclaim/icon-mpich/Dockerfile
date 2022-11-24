@@ -3,7 +3,7 @@ FROM c2sm/nvhpc:21.3-devel-cuda_multi-ubuntu20.04-icon-mpich-dependencies as bui
 ENV SPACK_PREFIX=/root/c2sm-spack
 ENV SPACK_SYSTEM_CONFIG_PATH=/root/c2sm-spack/sysconfigs/unknown
 ENV SPACK_ROOT=/root/c2sm-spack/spack
-ENV ICON_SPEC="icon@exclaim-master%nvhpc +mpi ^netlib-lapack ~external-blas ^$MPICH_SPEC"
+ENV ICON_SPEC="icon@container_build%nvhpc +mpi ^netlib-lapack ~external-blas ^$MPICH_SPEC"
 
 # install dummy slurm
 RUN apt-get -yqq update \

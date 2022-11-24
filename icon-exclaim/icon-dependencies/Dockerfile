@@ -5,7 +5,7 @@ ENV SPACK_SYSTEM_CONFIG_PATH=/root/c2sm-spack/sysconfigs/unknown
 ENV SPACK_ROOT=/root/c2sm-spack/spack
 
 # Moved from nvidia-spack/Dockerfile
-RUN --mount=type=ssh spack install --only dependencies --fail-fast icon@exclaim-master%nvhpc +mpi ^netlib-lapack ~external-blas
+RUN --mount=type=ssh spack install --only dependencies --fail-fast icon@container_build%nvhpc +mpi ^netlib-lapack ~external-blas
 
 WORKDIR /root
 SHELL ["docker-shell"]
