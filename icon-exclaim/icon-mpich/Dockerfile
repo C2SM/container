@@ -2,6 +2,11 @@
 FROM c2sm/nvhpc:21.3-devel-cuda_multi-ubuntu20.04-icon-mpich-dependencies as builder
 ENV ICON_SPEC="icon@container_build%nvhpc +mpi ^netlib-lapack ~external-blas"
 
+# Authorize SSH Host
+RUN mkdir -p /root/.ssh && \
+    chmod 0700 /root/.ssh && \
+    ssh-keyscan github.com > /root/.ssh/known_hosts
+
 RUN --mount=type=ssh \
     . ${SPACK_PREFIX}/spack/share/spack/setup-env.sh && \
     cd /opt/spack-environment && \
