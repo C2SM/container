@@ -2,13 +2,6 @@
 FROM c2sm/nvhpc:21.3-devel-cuda_multi-ubuntu20.04-icon-mpich-dependencies as builder
 ENV ICON_SPEC="icon@container_build%nvhpc +mpi ^netlib-lapack ~external-blas"
 
-# install dummy slurm
-RUN apt-get -yqq update && \
-    apt-get -yqq install --no-install-recommends slurm && \
-    locale-gen en_US.UTF-8 && \
-    pip3 install boto3 && \
-    rm -rf /var/lib/apt/lists/*
-
 RUN --mount=type=ssh \
     . ${SPACK_PREFIX}/spack/share/spack/setup-env.sh && \
     cd /opt/spack-environment && \

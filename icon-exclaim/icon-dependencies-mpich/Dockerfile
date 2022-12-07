@@ -21,11 +21,6 @@ RUN apt-get -yqq update \
  && pip3 install boto3 \
  && rm -rf /var/lib/apt/lists/*
 
- # Authorize SSH Host
-RUN mkdir -p /root/.ssh && \
-    chmod 0700 /root/.ssh && \
-    ssh-keyscan github.com > /root/.ssh/known_hosts
-
 # setup spack-c2sm instance
 RUN git clone --depth 1 --recurse-submodules --shallow-submodules -b dev_v0.18.1 https://github.com/C2SM/spack-c2sm.git ${SPACK_PREFIX}
 
