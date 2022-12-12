@@ -1,4 +1,4 @@
-# ICON-EXCLAIM Containerization:  a path for Continuous Integration and portable high-performance simulations in the future
+# ICON-EXCLAIM Containerization:  a path for Continuous Integration and portable high-performance ICON simulations
 
 ICON-EXCLAIM is based on a public release of the ICOsahedral Non-hydrostatic (ICON) model for climate simulations and numerical weather prediction.  
 It is being rewritten in the EXCLAIM project to use a workflow written in Python (as opposed to Fortran currently) calling components (or "granules" 
@@ -32,7 +32,7 @@ Many software repositories are required for the ICON-EXCLAIM build and container
 
 ICON-EXCLAIM relies on many GIT submodules (sometimes called 'externals') which reside in 
 
-The git submodules:  come from various repositories, some public, some private.  In particular, URLs with the prefix '../..' are within the main ICON repository,  gitlab.dkrz.de:, and thus are all private.
+The git submodules:  come from various repositories, some public, some private.  In particular, URLs with the prefix '../..' are within the main ICON repository,  gitlab.dkrz.de:, and thus are all private.  The same SSH keys as ICON apply for these private repositories.
 
 - [submodule "externals/mtime"] url = ../../icon-libraries/libmtime.git
 - [submodule "externals/jsbach"] url = ../../jsbach/jsbach.git
@@ -51,4 +51,5 @@ The git submodules:  come from various repositories, some public, some private. 
 - [submodule "utils/mkexp"] url = https://git.mpimet.mpg.de/public/mkexp
 - [submodule "externals/art"]	url = ../../art/art.git
 - [submodule "externals/ppm"]	url = ../../jahns/ppm.git
+
 
