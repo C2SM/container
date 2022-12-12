@@ -8,7 +8,6 @@ RUN mkdir -p /root/.ssh && \
     ssh-keyscan github.com > /root/.ssh/known_hosts
 
 RUN --mount=type=ssh \
-    . ${SPACK_PREFIX}/spack/share/spack/setup-env.sh && \
     cd /opt/spack-environment && \
     spack env activate . && \
     spack add ${ICON_SPEC} && \
@@ -24,8 +23,7 @@ RUN find -L /opt/view/* -type f -exec readlink -f '{}' \; | \
     awk -F: '{print $1}' | xargs strip -s
 
 # Modifications to the environment that are necessary to run
-RUN . ${SPACK_PREFIX}/spack/share/spack/setup-env.sh && \
-    cd /opt/spack-environment && \
+RUN cd /opt/spack-environment && \
     spack env activate --sh -d . >> /etc/profile.d/z10_spack_environment.sh && \
     spack env activate . && \
     echo $(spack find --format='{prefix.lib}' mpich) > /etc/ld.so.conf.d/mpich.conf
@@ -42,3 +40,4 @@ COPY --from=builder /etc/ld.so.conf.d/mpich.conf /etc/ld.so.conf.d/mpich.conf
 RUN ldconfig
 
 ENTRYPOINT ["/bin/bash", "--rcfile", "/etc/profile", "-l", "-c"]
+CMD ["bash"]

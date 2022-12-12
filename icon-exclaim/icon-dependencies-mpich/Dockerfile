@@ -22,7 +22,9 @@ RUN apt-get -yqq update \
  && rm -rf /var/lib/apt/lists/*
 
 # setup spack-c2sm instance
-RUN git clone --depth 1 --recurse-submodules --shallow-submodules -b dev_v0.18.1 https://github.com/C2SM/spack-c2sm.git ${SPACK_PREFIX}
+RUN git clone --depth 1 --recurse-submodules --shallow-submodules -b dev_v0.18.1 https://github.com/C2SM/spack-c2sm.git ${SPACK_PREFIX} && \
+    cd ${SPACK_PREFIX} && \
+    . ./setup-env.sh unknown
 
 # add additional packages from Sergey
 COPY packages/icon ${SPACK_PREFIX}/packages/icon
@@ -37,11 +39,11 @@ COPY packages/scales-ppm ${SPACK_PREFIX}/packages/scales-ppm
 RUN mkdir /opt/spack-environment \
 &&  (echo "spack:" \
 &&   echo "  specs:" \
-&&   echo "  - eccodes@2.25.0%nvhpc +aec~fortran~ipo~memfs~netcdf~openmp~png~pthreads~python+shared~tools build_type=RelWithDebInfo definitions=auto jp2k=openjpeg samples=auto" \
+&&   echo "  - eccodes@2.19.1%nvhpc +aec~fortran~ipo~memfs~netcdf~openmp~png~pthreads~python+shared~tools build_type=RelWithDebInfo definitions=auto jp2k=openjpeg samples=auto" \
 &&   echo "  - mpich@3.4.3%nvhpc ~argobots~cuda+fortran+hwloc+hydra+libxml2+pci~rocm+romio~slurm~two_level_namespace~verbs+wrapperrpath datatype-engine=auto device=ch4 netmod=ofi pmi=pmi" \
 &&   echo "  - netcdf-c@4.8.1%nvhpc +mpi~parallel-netcdf+pic+shared" \
 &&   echo "  - netcdf-fortran@4.5.4%nvhpc ~doc+pic+shared" \
-&&   echo "  - netlib-lapack@3.10.1%nvhpc ~external-blas~ipo+lapacke+shared~xblas build_type=RelWithDebInfo" \ 
+&&   echo "  - netlib-lapack@3.10.1%nvhpc ~external-blas~ipo+lapacke+shared~xblas build_type=RelWithDebInfo" \
 &&   echo "  - hdf5@1.12.2%nvhpc ~cxx~fortran+hl~ipo~java+mpi+shared+szip~threadsafe+tools api=default build_type=RelWithDebInfo" \
 &&   echo "  - findutils%gcc" \
 &&   echo "  concretizer:" \
@@ -57,9 +59,22 @@ RUN mkdir /opt/spack-environment \
 &&   echo "        prefix: /opt/nvidia/hpc_sdk/Linux_x86_64/21.3/cuda/11.0/" \
 &&   echo "      buildable: false") > /opt/spack-environment/spack.yaml
 
-RUN . ${SPACK_PREFIX}/spack/share/spack/setup-env.sh && \
-    cd /opt/spack-environment && \
+RUN mkdir -p $SPACK_ROOT
+
+RUN ln -s $SPACK_ROOT/share/spack/docker/entrypoint.bash \
+    /usr/local/bin/docker-shell \
+    && ln -s $SPACK_ROOT/share/spack/docker/entrypoint.bash \
+    /usr/local/bin/interactive-shell \
+    && ln -s $SPACK_ROOT/share/spack/docker/entrypoint.bash \
+    /usr/local/bin/spack-env
+
+SHELL ["docker-shell"]
+
+RUN cd /opt/spack-environment && \
     spack compiler find && \
     spack external find --not-buildable cmake perl python && \
     spack env activate . && \
     spack install --fail-fast
+
+ENTRYPOINT ["/bin/bash", "/usr/local/bin/spack-env"]
+CMD ["interactive-shell"]
