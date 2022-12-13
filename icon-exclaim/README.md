@@ -56,13 +56,26 @@ All the private repositories have been mirrored from their original repositories
 
 A future step will be to incorporate the Docker files and the documentation into the icon-exclaim.git repository, such that it can create containers without further clones.  This is a requirement of the CSCS-CI system.
 
+## Spack build
+
+
 ## Container stages
 
-ICON has extensive package dependencies, e.g., LAPACK, BLAS, MPI, NetCDF, HDF5, eccodes libraries.  We have wrapped the container build into two distinct stages:
+ICON has extensive package dependencies, e.g., LAPACK, BLAS, MPI, NetCDF, HDF5, eccodes libraries.  There is distinct advantage of building the dependencies in ***stages*** so that previously built containers can be 'checkpointed':  this will ensure one need not keep rebuilding 'from scratch'.  After creating as many as 5 stages during development, we settled on two (with two variants of the application container):
 
-- icon-dependencies-mpich : this container contains all the above-mentioned ICON dependencies.  Since these rarely change, this container can usually be reused when the ICON container is built.
+- icon-dependencies-mpich : this container contains all the above-mentioned ICON dependencies.  Since these rarely change, this container can usually be reused when the ICON container is built.  This container is agnostic to GPUs.  
 
-- icon-mpich : this container depends on the previous one, and wraps the icon application (and its submodules).  We distinguish icon-mpich from a rarely used icon-serial variant, which is has no communication and must be run with a single process (possibly with multi-threading).
+- icon-mpich : this container depends on the previous one, and wraps the icon application (and its submodules).  We distinguish icon-mpich from a rarely used (and unsupported) icon-serial variant, which is has no communication and must be run with a single process (possibly with multi-threading).
+
+- icon-mpich-gpu : this container also depends on icon-dependencies-mpich and builds the application container to be run on GPUs.
+
+In other words, a runnable container would require first building icon-dependencies-mpich, and then either icon-mpich or icon-mpich-gpu.  
+
+## Build Instructions
+
+## 
+
+
 
 
 
