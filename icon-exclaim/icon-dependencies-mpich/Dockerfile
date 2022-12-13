@@ -55,8 +55,10 @@ RUN mkdir /opt/spack-environment \
 &&   echo "  packages:" \
 &&   echo "    cuda:"\
 &&   echo "      externals:" \
-&&   echo "      - spec: cuda@11.0.221%gcc" \
-&&   echo "        prefix: /opt/nvidia/hpc_sdk/Linux_x86_64/21.3/cuda/11.0/" \
+&&   echo "      - spec: cuda@11.2.142%gcc" \
+&&   echo "        prefix: /opt/nvidia/hpc_sdk/Linux_x86_64/21.3/cuda/11.2/" \
+&&   echo "      - spec: cuda@11.2.142%nvhpc" \
+&&   echo "        prefix: /opt/nvidia/hpc_sdk/Linux_x86_64/21.3/cuda/11.2/" \
 &&   echo "      buildable: false") > /opt/spack-environment/spack.yaml
 
 RUN mkdir -p $SPACK_ROOT

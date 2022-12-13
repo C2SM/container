@@ -29,7 +29,7 @@ RUN cd /opt/spack-environment && \
     echo $(spack find --format='{prefix.lib}' mpich) > /etc/ld.so.conf.d/mpich.conf
 
 # Bare OS image to run the installed executables
-FROM nvcr.io/nvidia/nvhpc:21.3-runtime-cuda11.0-ubuntu20.04
+FROM nvcr.io/nvidia/nvhpc:21.3-runtime-cuda11.2-ubuntu20.04
 
 COPY --from=builder /opt/spack-environment /opt/spack-environment
 COPY --from=builder /opt/software /opt/software
