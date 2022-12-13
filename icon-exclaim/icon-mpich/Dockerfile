@@ -1,38 +1,43 @@
 # syntax=docker/dockerfile:1.2
-FROM c2sm/nvhpc:21.3-devel-cuda_multi-ubuntu20.04-icon-mpich-dependencies
-ENV SPACK_PREFIX=/root/c2sm-spack
-ENV SPACK_SYSTEM_CONFIG_PATH=/root/c2sm-spack/sysconfigs/unknown
-ENV SPACK_ROOT=/root/c2sm-spack/spack
+FROM c2sm/nvhpc:21.3-devel-cuda_multi-ubuntu20.04-icon-mpich-dependencies as builder
+ENV ICON_SPEC="icon@container_build%nvhpc +mpi ^netlib-lapack ~external-blas"
 
-RUN --mount=type=ssh spack install --fail-fast icon@exclaim-master%nvhpc +mpi ^netlib-lapack ~external-blas
+# Authorize SSH Host
+RUN mkdir -p /root/.ssh && \
+    chmod 0700 /root/.ssh && \
+    ssh-keyscan github.com > /root/.ssh/known_hosts
 
-# dump paths to file
-RUN echo $(spack find --paths icon | grep -o -P "/root/c2sm-spack/spack/opt/.*")/bin/icon > /opt/icon
+RUN --mount=type=ssh \
+    cd /opt/spack-environment && \
+    spack env activate . && \
+    spack add ${ICON_SPEC} && \
+    spack concretize --force && \
+    spack install --fail-fast && \
+    spack gc -y
 
-# dump spack-env to file
-RUN echo $(spack load --sh icon) > /opt/spack-env
+# Strip all the binaries
+RUN find -L /opt/view/* -type f -exec readlink -f '{}' \; | \
+    xargs file -i | \
+    grep 'charset=binary' | \
+    grep 'x-executable\|x-archive\|x-sharedlib' | \
+    awk -F: '{print $1}' | xargs strip -s
+
+# Modifications to the environment that are necessary to run
+RUN cd /opt/spack-environment && \
+    spack env activate --sh -d . >> /etc/profile.d/z10_spack_environment.sh && \
+    spack env activate . && \
+    echo $(spack find --format='{prefix.lib}' mpich) > /etc/ld.so.conf.d/mpich.conf
 
 # Bare OS image to run the installed executables
 FROM nvcr.io/nvidia/nvhpc:21.3-runtime-cuda11.0-ubuntu20.04
 
-COPY --from=builder /opt/spack-install /opt/spack-install
-COPY --from=builder /opt/cosmo /opt/cosmo
-COPY --from=builder /opt/spack-env /opt/spack-env
-COPY --from=builder  /etc/ld.so.conf.d/mpich.conf  /etc/ld.so.conf.d/mpich.conf
-
-RUN ln -s $(cat /opt/cosmo) /root/cosmo_gpu
-
-# put spack-env into profile 
-RUN echo "$(cat opt/spack-env)" >> /etc/profile
+COPY --from=builder /opt/spack-environment /opt/spack-environment
+COPY --from=builder /opt/software /opt/software
+COPY --from=builder /opt/view /opt/view
+COPY --from=builder /etc/profile.d/z10_spack_environment.sh /etc/profile.d/z10_spack_environment.sh
+COPY --from=builder /etc/ld.so.conf.d/mpich.conf /etc/ld.so.conf.d/mpich.conf
 
 RUN ldconfig
 
-ENTRYPOINT ["/bin/bash", "--rcfile", "/etc/profile", "-l" ,"-c"]
-WORKDIR /root
-
-
-WORKDIR /root
-SHELL ["docker-shell"]
-
-ENTRYPOINT ["/bin/bash", "/root/c2sm-spack/spack/share/spack/docker/entrypoint.bash"]
-CMD ["interactive-shell"]
+ENTRYPOINT ["/bin/bash", "--rcfile", "/etc/profile", "-l", "-c"]
+CMD ["bash"]
