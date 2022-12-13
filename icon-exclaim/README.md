@@ -34,22 +34,36 @@ ICON-EXCLAIM relies on many GIT submodules (sometimes called 'externals') which 
 
 The git submodules:  come from various repositories, some public, some private.  In particular, URLs with the prefix '../..' are within the main ICON repository,  gitlab.dkrz.de:, and thus are all private.  The same SSH keys as ICON apply for these private repositories.
 
-- [submodule "externals/mtime"] url = ../../icon-libraries/libmtime.git
-- [submodule "externals/jsbach"] url = ../../jsbach/jsbach.git
-- [submodule "externals/yac"]	url = ../../dkrz-sw/YAC.git
-- [submodule "externals/tixi"] url = ../../icon-libraries/libtixi.git
-- [submodule "externals/yaxt"] url = ../../dkrz-sw/yaxt.git
+- [submodule "externals/mtime"] url = git@github.com:C2SM/libmtime.git
+- [submodule "externals/jsbach"] url = git@github.com:C2SM/jsbach/jsbach.git
+- [submodule "externals/yac"]	url = https://gitlab.dkrz.de/dkrz-sw/YAC.git
+- [submodule "externals/tixi"] url = git@github.com:C2SM/icon-libraries/libtixi.git
+- [submodule "externals/yaxt"] url = https://gitlab.dkrz.de/dkrz-sw/yaxt.git 
 - [submodule "externals/rte-rrtmgp"] url = https://github.com/earth-system-radiation/rte-rrtmgp.git
 - [submodule "externals/cub"] url = https://github.com/NVlabs/cub.git
 - [submodule "externals/omni-xmod-pool"] url = https://github.com/claw-project/omni-xmod-pool.git
-- [submodule "externals/cdi"]	url = ../../mpim-sw/libcdi.git
-- [submodule "externals/sct"]	url = ../../dkrz-sw/sct.git
-- [submodule "externals/ecrad"]	url = ../../dwd-sw/libecrad.git
-- [submodule "externals/dace_icon"]	url = ../../dwd-sw/dace-icon-interface.git
-- [submodule "externals/emvorado"]url = ../../dwd-sw/emvorado-for-icon.git
-- [submodule "externals/probtest"]url = ../../cscs-sw/probtest.git
+- [submodule "externals/cdi"]	url = https://gitlab.dkrz.de/mpim-sw/libcdi.git 
+- [submodule "externals/sct"]	url =https://gitlab.dkrz.de/dkrz-sw/sct.git
+- [submodule "externals/ecrad"]	url = git@github.com:C2SM/libecrad.git
+- [submodule "externals/dace_icon"]	url = git@github.com:C2SM/dace-icon-interface.git
+- [submodule "externals/emvorado"]url = git@github.com:C2SM/emvorado-for-icon.git
+- [submodule "externals/probtest"]url = git@github.com:C2SM/probtest.git
 - [submodule "utils/mkexp"] url = https://git.mpimet.mpg.de/public/mkexp
-- [submodule "externals/art"]	url = ../../art/art.git
-- [submodule "externals/ppm"]	url = ../../jahns/ppm.git
+- [submodule "externals/art"]	url = git@github.com:C2SM/art/art.git
+- [submodule "externals/ppm"]	url = git@github.com:C2SM/ppm.git
+
+All the private repositories have been mirrored from their original repositories on github.com:C2SM so that any user who can access the icon-exclaim.git repository can also aceess all submodules.
+
+A future step will be to incorporate the Docker files and the documentation into the icon-exclaim.git repository, such that it can create containers without further clones.  This is a requirement of the CSCS-CI system.
+
+## Container stages
+
+ICON has extensive package dependencies, e.g., LAPACK, BLAS, MPI, NetCDF, HDF5, eccodes libraries.  We have wrapped the container build into two distinct stages:
+
+- icon-dependencies-mpich : this container contains all the above-mentioned ICON dependencies.  Since these rarely change, this container can usually be reused when the ICON container is built.
+
+- icon-mpich : this container depends on the previous one, and wraps the icon application (and its submodules).  We distinguish icon-mpich from a rarely used icon-serial variant, which is has no communication and must be run with a single process (possibly with multi-threading).
+
+
 
 
