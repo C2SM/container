@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.2
-FROM nvcr.io/nvidia/nvhpc:21.3-devel-cuda_multi-ubuntu20.04
+FROM nvcr.io/nvidia/nvhpc:21.3-devel-cuda11.2-ubuntu20.04
 ENV SPACK_PREFIX=/root/c2sm-spack
 ENV SPACK_SYSTEM_CONFIG_PATH=/root/c2sm-spack/sysconfigs/unknown
 ENV SPACK_ROOT=/root/c2sm-spack/spack
@@ -24,7 +24,7 @@ RUN apt-get -yqq update \
 # setup spack-c2sm instance
 RUN git clone --depth 1 --recurse-submodules --shallow-submodules -b dev_v0.18.1 https://github.com/C2SM/spack-c2sm.git ${SPACK_PREFIX} && \
     cd ${SPACK_PREFIX} && \
-    . ./setup-env.sh unknown
+    . ./setup-env.sh
 
 # add additional packages from Sergey
 COPY packages/icon ${SPACK_PREFIX}/packages/icon
@@ -56,8 +56,6 @@ RUN mkdir /opt/spack-environment \
 &&   echo "    cuda:"\
 &&   echo "      externals:" \
 &&   echo "      - spec: cuda@11.2.142%gcc" \
-&&   echo "        prefix: /opt/nvidia/hpc_sdk/Linux_x86_64/21.3/cuda/11.2/" \
-&&   echo "      - spec: cuda@11.2.142%nvhpc" \
 &&   echo "        prefix: /opt/nvidia/hpc_sdk/Linux_x86_64/21.3/cuda/11.2/" \
 &&   echo "      buildable: false") > /opt/spack-environment/spack.yaml
 
