@@ -73,7 +73,40 @@ In other words, a runnable container would require first building icon-dependenc
 
 ## Build Instructions
 
-## 
+The docker image can naturally be built with ```docker```, but also with OCI-compatible builders, such as Buildah  (https://buildah.io/).  Due to the requirement for root access, the former presents security risks on HPC systems and is virtually never available.  On the other hand, one can easily build images on a personal computer and copy them subsequently to the HPC system to be run with a Docker-compatible framework, such as Sarus (https://products.cscs.ch/sarus/).  Since the latter only builds the image, there are no such security risks, and it should build the image faster than a laptop.  
+
+### Docker build
+
+### Build build
+
+One should first consult the Buildah page https://user.cscs.ch/tools/containers/buildah/ for key instructions, in particular to define the appropriate ```$HOME/.config/containers/storage.conf``` file, e.g.,
+
+```
+[storage]
+  runroot = "/scratch/local/<username>/runroot"
+  graphroot = "/scratch/local/<username>/root"
+```
+
+One starts by checking out the master branch of this repository:
+
+```
+git clone git@github.com:C2SM/container
+cd container/icon-exclaim
+```
+
+Due to CSCS limitations, the image must be built on a compute node:
+```
+salloc -N1 --time=04:00:00 -C "gpu&contbuild" -A csstaff
+ssh $SLURM_NODELIST
+```
+
+The icon-mpich-dependencies are built first:
+
+```
+cd icon-dependencies-mpich
+buildah bud --format=docker --tag $(cat TAG)
+```
+
 
 
 
