@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.2
 FROM c2sm/nvhpc:21.3-devel-cuda11.2-ubuntu20.04-icon-mpich-dependencies as builder
-ENV ICON_SPEC="icon@container_build%nvhpc +mpi +ecrad ^netlib-lapack ~external-blas"
+ENV ICON_SPEC="icon@container_build%nvhpc gpu=60 +mpi +ecrad ^netlib-lapack ~external-blas"
 
 # Authorize SSH Host
 RUN mkdir -p /root/.ssh && \
