@@ -77,9 +77,9 @@ The docker image can naturally be built with ```docker```, but also with OCI-com
 
 ### Docker build
 
-### Build build
+### Buildah build on CSCS Infrastructure
 
-One should first consult the Buildah page https://user.cscs.ch/tools/containers/buildah/ for key instructions, in particular to define the appropriate ```$HOME/.config/containers/storage.conf``` file, e.g.,
+Buildah is a tool for building OCI-compatible images. It doesn't depend on a daemon such as Docker and therefore doesn't require root privileges. Buildah provides a command-line tool that replicates all the commands found in a Dockerfile. It is the container builder of choice on CSCS infrastructure. One should first consult the Buildah page https://user.cscs.ch/tools/containers/buildah/ for key instructions, in particular to define the appropriate ```$HOME/.config/containers/storage.conf``` file, e.g.,
 
 ```
 [storage]
@@ -100,12 +100,81 @@ salloc -N1 --time=04:00:00 -C "gpu&contbuild" -A csstaff
 ssh $SLURM_NODELIST
 ```
 
-The icon-mpich-dependencies are built first:
+The container for the dependencies of ICON is built first:
 
 ```
 cd icon-dependencies-mpich
 buildah bud --format=docker --tag $(cat TAG)
 ```
+
+At this point one can optionally archive the dependency image, which can then be loaded ("pulled") at a later time during the build of the application container:
+
+```
+buildah push $(cat TAG) docker-archive:/scratch/snx3000/username/icon-dependencies-mpich.tar
+```
+
+or one can proceed immediately to complete the container for the application itself and archive it for subsequent execution.  It is possible that the SSH keys needed for the icon-exclaim have to be scanned at this point:
+
+```
+eval $(ssh-agent) > /dev/null
+ssh-add ~/.ssh/<private_key>
+```
+
+For the CPU container:
+
+```
+cd ../icon-mpich
+buildah bud --format=docker --tag $(cat TAG)
+buildah push $(cat TAG) docker-archive:/scratch/snx3000/username/icon-mpich.tar
+```
+
+There are separate dockerfiles (largely for clarity, since the differences are minor) for the GPU:
+
+```
+cd ../icon-mpich-gpu
+buildah bud --format=docker --tag $(cat TAG)
+buildah push $(cat TAG) docker-archive:/scratch/snx3000/username/icon-mpich-gpu.tar
+```
+
+### Container execution on CSCS Infrastructure
+
+Due to the above-mentioned security limitations of Docker, CSCS has built the OCI-compliant container-engine Sarus (https://products.cscs.ch/sarus/) to run Docker containers safely on HPC infrastructure.   First the container --- whether generated with Docker on a personal computer, or with Buildah --- must be loaded.
+
+```
+module load sarus
+sarus load /scratch/snx3000/username/icon-mpich-gpu.tar icon:latest
+```
+
+The typical run scripts  require some subtle modifications in particular in the START and MODEL environment variables.  It is worthwhile to construct a new script, e.g.,  based on the existing one.  For example, exp.mch_bench_r19b07_dev.run might be modified to exp.mch_bench_r19b07_dev_sarus.run
+
+```
+> builddir=/scratch/snx3000/wsawyer/ICON/icon-exclaim/build_nvhpc_gpu
+> experiments_dir=$builddir/experiments/$EXPNAME
+> module load sarus
+< export START="srun -n $mpi_total_procs --ntasks-per-node $mpi_procs_pernode --threads-per-core=1 --cpus-per-task $OMP_NUM_THREADS"
+< export MODEL="${basedir}/bin/icon"
+---
+> export START="srun -n $mpi_total_procs --ntasks-per-node $mpi_procs_pernode --threads-per-core=1 --cpus-per-task $OMP_NUM_THREADS sarus run --mpi --mount=type=bind,src=$icon_data_rootFolder,destination=$icon_data_rootFolder --mount=type=bind,src=$thisdir,destination=$thisdir --mount=type=bind,src=$builddir,destination=$builddir --workdir=$experiments_dir load/library/icon:latest"
+> export MODEL="bash -c 'MPICH_RDMA_ENABLED_CUDA=1 LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libcuda.so icon'"
+```
+
+There are several locations in the standard ICON scripts where file system checks have to be disabled, since the container has its own file system:
+
+```
+> ###ls -ld ${EXPDIR}
+> ###check_error $? "${EXPDIR} does not exist?"
+> ###ls -l ${MODEL}
+> ###check_error $? "${MODEL} does not exist?"
+```
+
+With these changes, the script can be launched in the standard way:
+
+```
+sbatch exp.mch_bench_r19b07_dev_sarus.run
+```
+
+
+
 
 
 
