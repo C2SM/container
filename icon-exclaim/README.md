@@ -59,6 +59,7 @@ A future step will be to incorporate the Docker files and the documentation into
 ## Spack build
 
 
+
 ## Container stages
 
 ICON has extensive package dependencies, e.g., LAPACK, BLAS, MPI, NetCDF, HDF5, eccodes libraries.  There is distinct advantage of building the dependencies in ***stages*** so that previously built containers can be 'checkpointed':  this will ensure one need not keep rebuilding 'from scratch'.  After creating as many as 5 stages during development, we settled on two (with two variants of the application container):
@@ -76,6 +77,42 @@ In other words, a runnable container would require first building icon-dependenc
 The docker image can naturally be built with ```docker```, but also with OCI-compatible builders, such as Buildah  (https://buildah.io/).  Due to the requirement for root access, the former presents security risks on HPC systems and is virtually never available.  On the other hand, one can easily build images on a personal computer and copy them subsequently to the HPC system to be run with a Docker-compatible framework, such as Sarus (https://products.cscs.ch/sarus/).  Since the latter only builds the image, there are no such security risks, and it should build the image faster than a laptop.  
 
 ### Docker build
+
+One starts by checking out the master branch of this repository:
+
+```
+git clone git@github.com:C2SM/container
+cd container/icon-exclaim
+```
+
+The container for the dependencies of ICON is built first:
+
+```
+cd icon-dependencies-mpich
+docker build -t $(cat TAG) --ssh default .
+```
+
+In order to build the application container, the user will need access to the icon-exclaim.git repository which is private due to licensing restrictions.  It is possible that the SSH keys needed for the icon-exclaim have to be scanned at this point:
+
+```
+eval $(ssh-agent) > /dev/null
+ssh-add ~/.ssh/<private_key>
+```
+
+At this point it should be possible to build the CPU or GPU icon containers, e.g., for GPU:
+
+```
+cd ../icon-mpich-gpu
+docker build -t $(cat TAG) --ssh default .
+```
+
+The image has to be saved, e.g.,
+
+```
+docker save c2sm/nvhpc:21.3-devel-cuda_multi-ubuntu20.04-icon-mpich -o my_icon.tar
+```
+
+This can be run on the PC through docker or copied to an HPC platform for execution there.
 
 ### Buildah build on CSCS Infrastructure
 
