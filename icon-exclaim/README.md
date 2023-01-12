@@ -157,7 +157,7 @@ eval $(ssh-agent) > /dev/null
 ssh-add ~/.ssh/<private_key>
 ```
 
-For the application container, it is crucial to use the Buildah option ```--ssh=default``.
+For the application container, it is crucial to use the Buildah option ```--ssh=default```.
 
 For the CPU container:
 
