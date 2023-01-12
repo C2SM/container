@@ -157,11 +157,13 @@ eval $(ssh-agent) > /dev/null
 ssh-add ~/.ssh/<private_key>
 ```
 
+For the application container, it is crucial to use the Buildah option ```--ssh=default``.
+
 For the CPU container:
 
 ```
 cd ../icon-mpich
-buildah bud --format=docker --tag $(cat TAG)
+buildah bud --format=docker --ssh=default --tag $(cat TAG)
 buildah push $(cat TAG) docker-archive:/scratch/snx3000/username/icon-mpich.tar
 ```
 
@@ -169,7 +171,7 @@ There are separate dockerfiles (largely for clarity, since the differences are m
 
 ```
 cd ../icon-mpich-gpu
-buildah bud --format=docker --tag $(cat TAG)
+buildah bud --format=docker --ssh=default --tag $(cat TAG)
 buildah push $(cat TAG) docker-archive:/scratch/snx3000/username/icon-mpich-gpu.tar
 ```
 
