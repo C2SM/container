@@ -128,13 +128,20 @@ One starts by checking out the master branch of this repository:
 
 ```
 git clone git@github.com:C2SM/container
-cd container/icon-exclaim
 ```
 
 Due to CSCS limitations, the image must be built on a compute node:
 ```
 salloc -N1 --time=04:00:00 -C "gpu&contbuild" -A csstaff
 ssh $SLURM_NODELIST
+```
+
+Load the Buildah module and enter the icon-exclaim directory: 
+
+```
+module load daint-gpu
+module load Buildah
+cd container/icon-exclaim
 ```
 
 The container for the dependencies of ICON is built first:
