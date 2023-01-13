@@ -164,7 +164,7 @@ eval $(ssh-agent) > /dev/null
 ssh-add ~/.ssh/<private_key>
 ```
 
-For the application container, it is crucial to use the Buildah option ```--ssh=default```.
+For the application container, it is crucial to use the Buildah option ```--ssh=default```, since you will be accessing ICON from a private repository (which you hopefully have access to through the above-mentioned key).
 
 For the CPU container:
 
