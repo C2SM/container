@@ -188,7 +188,7 @@ Due to the above-mentioned security limitations of Docker, CSCS has built the OC
 
 ```
 module load sarus
-sarus load /scratch/snx3000/username/icon-mpich-gpu.tar icon:latest
+sarus load /scratch/snx3000/<username>/icon-mpich-gpu.tar icon:latest
 ```
 
 The typical run scripts  require some subtle modifications in particular in the START and MODEL environment variables.  It is worthwhile to construct a new script, e.g.,  based on the existing one.  For example, exp.mch_bench_r19b07_dev.run might be modified to exp.mch_bench_r19b07_dev_sarus.run
